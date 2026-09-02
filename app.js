@@ -96,3 +96,87 @@ function size() {
   document.getElementById(id).addEventListener("input", size);
 });
 size();
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function initMotion() {
+  if (reduceMotion) return;
+
+  const sections = document.querySelectorAll("main .section.reveal");
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("is-in");
+        io.unobserve(entry.target);
+      }
+    },
+    { threshold: 0.14, rootMargin: "0px 0px -10% 0px" }
+  );
+
+  document.documentElement.classList.add("motion-on");
+
+  function armReveals() {
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        section.classList.add("is-in");
+        return;
+      }
+      io.observe(section);
+    });
+  }
+
+  const hero = document.querySelector(".hero");
+  if (!hero) {
+    armReveals();
+    return;
+  }
+
+  const layers = [...hero.querySelectorAll(".hero-layer")].map((el) => ({
+    el,
+    factor: Number(el.dataset.parallax) || 0,
+  }));
+  const mobileMq = window.matchMedia("(max-width: 800px)");
+  let introDone = false;
+  let ticking = false;
+
+  function applyParallax() {
+    ticking = false;
+    if (!introDone) return;
+
+    const rect = hero.getBoundingClientRect();
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+      layers.forEach(({ el }) => {
+        el.style.transform = "";
+        el.style.willChange = "";
+      });
+      return;
+    }
+
+    const y = window.scrollY;
+    const scale = mobileMq.matches ? 0.35 : 1;
+    layers.forEach(({ el, factor }) => {
+      el.style.willChange = "transform";
+      el.style.transform = `translate3d(0, ${y * factor * scale}px, 0)`;
+    });
+  }
+
+  function requestTick() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(applyParallax);
+  }
+
+  window.setTimeout(() => {
+    hero.classList.add("intro-done");
+    introDone = true;
+    armReveals();
+    requestTick();
+  }, 800);
+
+  window.addEventListener("scroll", requestTick, { passive: true });
+  window.addEventListener("resize", requestTick, { passive: true });
+}
+
+initMotion();

@@ -19,7 +19,6 @@
       <a href="#work">Work</a>
       <a href="#systems">Systems</a>
       <a href="#craft">Demos</a>
-      <a href="#note">Method</a>
     </nav>
     <div class="nav-actions">
       <a class="ghost" href="https://github.com/kobesin322" target="_blank" rel="noreferrer">GitHub</a>
@@ -28,20 +27,20 @@
 
   <main id="top">
     <section class="hero">
-      <p class="kicker"><span class="dot"></span>Hong Kong · systems work</p>
-      <h1>
+      <p class="kicker hero-layer" data-parallax="0.08"><span class="dot"></span>Hong Kong · systems work</p>
+      <h1 class="hero-layer" data-parallax="0.28">
         <span class="serif">Kobe Sin</span>
         <small>Analyst Programmer · forecasts, dashboards, tools that compound</small>
       </h1>
-      <p class="lede">I build pipelines that turn messy operational data into a decision someone can act on. Same shape at work and after hours: contract the data, fail loudly, put the next action on a screen.</p>
-      <div class="hero-meta">
+      <p class="lede hero-layer" data-parallax="0.18">I build pipelines that turn messy operational data into a decision someone can act on. Same shape at work and after hours: contract the data, fail loudly, put the next action on a screen.</p>
+      <div class="hero-meta hero-layer" data-parallax="0.08">
         <span>~5 yrs shipping</span>
         <span>Python · JS · SQL</span>
         <span>HK</span>
       </div>
     </section>
 
-    <section id="work" class="section">
+    <section id="work" class="section reveal">
       <div class="section-head">
         <h2 class="serif">Selected work</h2>
         <p>Production systems need reliability. Side projects need iteration speed. Both share one loop: data in, a decision out, an interface that can explain itself.</p>
@@ -80,7 +79,7 @@
       </div>
     </section>
 
-    <section id="systems" class="section">
+    <section id="systems" class="section reveal">
       <div class="section-head">
         <h2 class="serif">How the work is shaped</h2>
         <p>Two diagrams. The first is the loop I keep rebuilding. The second is the public-layer forecast path — no internal architecture.</p>
@@ -202,7 +201,7 @@
       </div>
     </section>
 
-    <section id="craft" class="section">
+    <section id="craft" class="section reveal">
       <div class="section-head">
         <h2 class="serif">Live demos</h2>
         <p>Screenshots are weak evidence. These two widgets run in the page. 3D product views come later; the grammar stays 2D until the object itself needs depth.</p>
@@ -251,7 +250,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section reveal">
       <div class="section-head">
         <h2 class="serif">Stack</h2>
         <p>Judged by what ships. No badge collecting.</p>
@@ -272,18 +271,6 @@
       </div>
     </section>
 
-    <section id="note" class="section">
-      <div class="section-head">
-        <h2 class="serif">How this site is built</h2>
-        <p>Iterate in public. Keep the surface small. Add 3D when a product actually needs a third axis.</p>
-      </div>
-      <ol class="steps">
-        <li><b>Inventory.</b> Only describe work that can be public. Employer names and internal diagrams stay off the page.</li>
-        <li><b>Proof.</b> Diagrams and two running widgets instead of a paragraph that says “full-stack”.</li>
-        <li><b>Ship.</b> Static HTML / CSS / JS. No build step. Pages or Vercel both work from the repo root.</li>
-        <li><b>Later.</b> Three.js only where depth is the demo — a building, a globe, an order book — not as atmosphere.</li>
-      </ol>
-    </section>
   </main>
 
   <footer>

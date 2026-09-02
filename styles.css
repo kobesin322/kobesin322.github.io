@@ -74,6 +74,7 @@ a { color: inherit; }
 main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 28px 80px; }
 
 .hero { padding: 72px 0 48px; }
+.hero-layer { will-change: transform; }
 .kicker {
   display: flex;
   align-items: center;
@@ -236,10 +237,6 @@ canvas {
 .stack h3 { margin: 0 0 8px; font-size: 15px; }
 .stack p { margin: 0; color: #c4c2b6; font-size: 14px; }
 
-.steps { padding-left: 18px; color: #c4c2b6; }
-.steps li { margin: 0 0 10px; }
-.steps b { color: var(--ink); }
-
 footer {
   max-width: 1080px;
   margin: 0 auto;
@@ -247,6 +244,57 @@ footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 13px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero:not(.intro-done) .hero-layer {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: hero-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hero:not(.intro-done) .hero-layer:nth-child(1) { animation-delay: 0ms; }
+  .hero:not(.intro-done) .hero-layer:nth-child(2) { animation-delay: 90ms; }
+  .hero:not(.intro-done) .hero-layer:nth-child(3) { animation-delay: 180ms; }
+  .hero:not(.intro-done) .hero-layer:nth-child(4) { animation-delay: 270ms; }
+
+  .hero.intro-done .hero-layer {
+    animation: none;
+    opacity: 1;
+  }
+
+  .motion-on .section.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .motion-on .section.reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-layer,
+  .section.reveal {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    transition: none;
+    will-change: auto;
+  }
 }
 
 @media (max-width: 800px) {
