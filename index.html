@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kobe Sin — Analyst Programmer</title>
+  <meta name="description" content="Hong Kong-based analyst programmer. Forecasts, dashboards, and tools that turn data into a next action." />
+  <meta name="theme-color" content="#0b0c0a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Outfit:wght@360;480;580&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="nav">
+    <a class="mark" href="#top">KS</a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#systems">Systems</a>
+      <a href="#craft">Demos</a>
+      <a href="#note">Method</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="ghost" href="https://github.com/kobesin322" target="_blank" rel="noreferrer">GitHub</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="kicker"><span class="dot"></span>Hong Kong · systems work</p>
+      <h1>
+        <span class="serif">Kobe Sin</span>
+        <small>Analyst Programmer · forecasts, dashboards, tools that compound</small>
+      </h1>
+      <p class="lede">I build pipelines that turn messy operational data into a decision someone can act on. Same shape at work and after hours: contract the data, fail loudly, put the next action on a screen.</p>
+      <div class="hero-meta">
+        <span>~5 yrs shipping</span>
+        <span>Python · JS · SQL</span>
+        <span>HK</span>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <div class="section-head">
+        <h2 class="serif">Selected work</h2>
+        <p>Production systems need reliability. Side projects need iteration speed. Both share one loop: data in, a decision out, an interface that can explain itself.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <p class="tag">ML · Operations</p>
+          <h3>Load forecasting</h3>
+          <p>Time-series forecasts for building and system load. The work is data quality, feature windows, walk-forward checks, and a dashboard — not a list of model names.</p>
+          <ul class="chips"><li>Python</li><li>PyTorch</li><li>MySQL</li><li>GPU / K8s</li></ul>
+        </article>
+        <article class="card">
+          <p class="tag">Product · Analytics</p>
+          <h3>Learning analytics dashboard</h3>
+          <p>Internal views for progress and anomalies. Legacy stack: HTML5 / CSS / JS / MySQL. Value is query shape, permission edges, and whether one chart answers a real question.</p>
+          <ul class="chips"><li>JavaScript</li><li>MySQL</li><li>HTML5</li></ul>
+        </article>
+        <article class="card">
+          <p class="tag">Side · Trading ops</p>
+          <h3>Trade Road</h3>
+          <p>Journal and review loop. Split a good trade into setup, risk, and management instead of narrating P&amp;L after the fact. Built to sit next to a written playbook.</p>
+          <ul class="chips"><li>Journal</li><li>Review loop</li><li>Vercel</li></ul>
+        </article>
+        <article class="card">
+          <p class="tag">Side · Agents</p>
+          <h3>Daily digest agents</h3>
+          <p>Pull public investing posts into a fixed daily digest. The point is stable extract, denoise, and reruns — not a one-shot prompt demo.</p>
+          <ul class="chips"><li>Python</li><li>Structured output</li><li>Schedulers</li></ul>
+        </article>
+        <article class="card">
+          <p class="tag">Side · Geo</p>
+          <h3>GeoMock</h3>
+          <p>Study tooling for regional tells. Turn intuition into reviewable cards and comparison charts. Same move as the rest of the work: write the rule down.</p>
+          <ul class="chips"><li>Visual systems</li><li>Study cards</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="systems" class="section">
+      <div class="section-head">
+        <h2 class="serif">How the work is shaped</h2>
+        <p>Two diagrams. The first is the loop I keep rebuilding. The second is the public-layer forecast path — no internal architecture.</p>
+      </div>
+
+      <div class="info-grid">
+        <figure class="info">
+          <figcaption>
+            <h3>Decision loop</h3>
+            <p>If a screen cannot name the next action, it is a report, not a tool.</p>
+          </figcaption>
+          <svg class="diagram" viewBox="0 0 560 280" role="img" aria-label="Four-stage decision loop">
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#d4a017" />
+              </marker>
+            </defs>
+            <rect class="lane" x="16" y="36" width="120" height="88" rx="12" />
+            <rect class="lane" x="152" y="36" width="120" height="88" rx="12" />
+            <rect class="lane" x="288" y="36" width="120" height="88" rx="12" />
+            <rect class="lane gold" x="424" y="36" width="120" height="88" rx="12" />
+            <text x="76" y="74" text-anchor="middle" class="d-k">01</text>
+            <text x="212" y="74" text-anchor="middle" class="d-k">02</text>
+            <text x="348" y="74" text-anchor="middle" class="d-k">03</text>
+            <text x="484" y="74" text-anchor="middle" class="d-k">04</text>
+            <text x="76" y="98" text-anchor="middle" class="d-t">Data</text>
+            <text x="212" y="98" text-anchor="middle" class="d-t">Model</text>
+            <text x="348" y="98" text-anchor="middle" class="d-t">Interface</text>
+            <text x="484" y="98" text-anchor="middle" class="d-t">Action</text>
+            <line x1="136" y1="80" x2="150" y2="80" stroke="#d4a017" stroke-width="1.5" marker-end="url(#arrow)" />
+            <line x1="272" y1="80" x2="286" y2="80" stroke="#d4a017" stroke-width="1.5" marker-end="url(#arrow)" />
+            <line x1="408" y1="80" x2="422" y2="80" stroke="#d4a017" stroke-width="1.5" marker-end="url(#arrow)" />
+            <path d="M484 124 V168 H76 V124" fill="none" stroke="#2c2f27" stroke-width="1.4" stroke-dasharray="4 4" />
+            <text x="280" y="190" text-anchor="middle" class="d-s">feedback into the next window</text>
+            <text x="76" y="232" text-anchor="middle" class="d-s">meters · logs</text>
+            <text x="212" y="232" text-anchor="middle" class="d-s">baseline + residual</text>
+            <text x="348" y="232" text-anchor="middle" class="d-s">band before point</text>
+            <text x="484" y="232" text-anchor="middle" class="d-s">alert · size · skip</text>
+          </svg>
+        </figure>
+
+        <figure class="info">
+          <figcaption>
+            <h3>Where time goes</h3>
+            <p>Most of the hours are not the model. That is the point.</p>
+          </figcaption>
+          <svg class="diagram" viewBox="0 0 560 280" role="img" aria-label="Time split across the work">
+            <rect class="bar" x="40" y="48" width="300" height="28" rx="6" />
+            <rect class="bar accent" x="40" y="48" width="210" height="28" rx="6" />
+            <text x="48" y="67" class="d-on">Data contract &amp; cleaning</text>
+            <text x="352" y="67" class="d-s">35%</text>
+
+            <rect class="bar" x="40" y="92" width="300" height="28" rx="6" />
+            <rect class="bar moss" x="40" y="92" width="150" height="28" rx="6" />
+            <text x="48" y="111" class="d-on">Interface / dashboard</text>
+            <text x="352" y="111" class="d-s">25%</text>
+
+            <rect class="bar" x="40" y="136" width="300" height="28" rx="6" />
+            <rect class="bar dim" x="40" y="136" width="120" height="28" rx="6" />
+            <text x="48" y="155" class="d-on">Validation &amp; review</text>
+            <text x="352" y="155" class="d-s">20%</text>
+
+            <rect class="bar" x="40" y="180" width="300" height="28" rx="6" />
+            <rect class="bar faint" x="40" y="180" width="90" height="28" rx="6" />
+            <text x="48" y="199" class="d-on">Model fitting</text>
+            <text x="352" y="199" class="d-s">15%</text>
+
+            <rect class="bar" x="40" y="224" width="300" height="28" rx="6" />
+            <rect class="bar ghost" x="40" y="224" width="30" height="28" rx="6" />
+            <text x="48" y="243" class="d-t">Glue / deploy</text>
+            <text x="352" y="243" class="d-s">5%</text>
+          </svg>
+        </figure>
+
+        <figure class="info span-2">
+          <figcaption>
+            <h3>Forecast path — public layer</h3>
+            <p>Real production graphs stay off this page. This is the shape: window the series, block leakage, score intervals, then show the action.</p>
+          </figcaption>
+          <svg class="diagram wide" viewBox="0 0 1000 220" role="img" aria-label="Forecast pipeline from ingest to serve">
+            <defs>
+              <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#8faf6a" />
+              </marker>
+            </defs>
+            <g class="node" transform="translate(20,50)">
+              <rect width="160" height="72" rx="12" />
+              <text x="80" y="32" text-anchor="middle" class="d-k">INGEST</text>
+              <text x="80" y="52" text-anchor="middle" class="d-s">meters · weather</text>
+            </g>
+            <g class="node" transform="translate(220,50)">
+              <rect width="160" height="72" rx="12" />
+              <text x="80" y="32" text-anchor="middle" class="d-k">WINDOW</text>
+              <text x="80" y="52" text-anchor="middle" class="d-s">96-step · drop gaps</text>
+            </g>
+            <g class="node" transform="translate(420,50)">
+              <rect width="160" height="72" rx="12" />
+              <text x="80" y="32" text-anchor="middle" class="d-k">FEATURES</text>
+              <text x="80" y="52" text-anchor="middle" class="d-s">lag 24 / 168 · CDD</text>
+            </g>
+            <g class="node gold-node" transform="translate(620,50)">
+              <rect width="160" height="72" rx="12" />
+              <text x="80" y="32" text-anchor="middle" class="d-k">MODEL</text>
+              <text x="80" y="52" text-anchor="middle" class="d-s">baseline + residual</text>
+            </g>
+            <g class="node" transform="translate(820,50)">
+              <rect width="160" height="72" rx="12" />
+              <text x="80" y="32" text-anchor="middle" class="d-k">SERVE</text>
+              <text x="80" y="52" text-anchor="middle" class="d-s">band · alert · log</text>
+            </g>
+            <line x1="180" y1="86" x2="218" y2="86" stroke="#8faf6a" stroke-width="1.6" marker-end="url(#arrow2)" />
+            <line x1="380" y1="86" x2="418" y2="86" stroke="#8faf6a" stroke-width="1.6" marker-end="url(#arrow2)" />
+            <line x1="580" y1="86" x2="618" y2="86" stroke="#8faf6a" stroke-width="1.6" marker-end="url(#arrow2)" />
+            <line x1="780" y1="86" x2="818" y2="86" stroke="#8faf6a" stroke-width="1.6" marker-end="url(#arrow2)" />
+            <text x="500" y="168" text-anchor="middle" class="d-s">leak-check at the forecast origin · pinball 0.1 / 0.5 / 0.9 · residual &gt; 2σ becomes an alert</text>
+            <text x="500" y="192" text-anchor="middle" class="d-s">MAPE is a diagnostic. It is not the product.</text>
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <section id="craft" class="section">
+      <div class="section-head">
+        <h2 class="serif">Live demos</h2>
+        <p>Screenshots are weak evidence. These two widgets run in the page. 3D product views come later; the grammar stays 2D until the object itself needs depth.</p>
+      </div>
+
+      <div class="demo-grid">
+        <article class="demo">
+          <header>
+            <h3>Synthetic load forecast</h3>
+            <p>48-hour baseline and a prediction band. Synthetic series. Same rule as a real energy view: draw the interval first.</p>
+          </header>
+          <canvas id="load-chart" width="720" height="280" aria-label="Synthetic load forecast"></canvas>
+          <div class="demo-foot">
+            <button type="button" id="reshuffle">Resample</button>
+            <span id="load-stat" class="mono"></span>
+          </div>
+        </article>
+
+        <article class="demo">
+          <header>
+            <h3>Position sizer</h3>
+            <p>Equity × risk% ÷ stop distance. In a trading system the first correct number is size you can lose.</p>
+          </header>
+          <form id="size-form" class="calc">
+            <label>Equity
+              <input id="eq" type="number" value="20000" min="100" step="100" />
+            </label>
+            <label>Risk %
+              <input id="risk" type="number" value="0.5" min="0.1" max="5" step="0.1" />
+            </label>
+            <label>Stop $
+              <input id="stop" type="number" value="1.20" min="0.01" step="0.01" />
+            </label>
+          </form>
+          <div class="calc-out">
+            <div>
+              <span class="muted">Risk $</span>
+              <strong id="risk-amt">—</strong>
+            </div>
+            <div>
+              <span class="muted">Shares / units</span>
+              <strong id="qty">—</strong>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 class="serif">Stack</h2>
+        <p>Judged by what ships. No badge collecting.</p>
+      </div>
+      <div class="stack">
+        <div>
+          <h3>Production</h3>
+          <p>Python · PyTorch · MySQL / SQL Server · JavaScript · HTML5 / CSS · Linux / K8s</p>
+        </div>
+        <div>
+          <h3>Side systems</h3>
+          <p>TypeScript · React · Vite · Pine Script · agent workflows · Vercel</p>
+        </div>
+        <div>
+          <h3>How I work</h3>
+          <p>Write the data contract and failure modes before the model. A dashboard should answer what to do next, not just print accuracy.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="note" class="section">
+      <div class="section-head">
+        <h2 class="serif">How this site is built</h2>
+        <p>Iterate in public. Keep the surface small. Add 3D when a product actually needs a third axis.</p>
+      </div>
+      <ol class="steps">
+        <li><b>Inventory.</b> Only describe work that can be public. Employer names and internal diagrams stay off the page.</li>
+        <li><b>Proof.</b> Diagrams and two running widgets instead of a paragraph that says “full-stack”.</li>
+        <li><b>Ship.</b> Static HTML / CSS / JS. No build step. Pages or Vercel both work from the repo root.</li>
+        <li><b>Later.</b> Three.js only where depth is the demo — a building, a globe, an order book — not as atmosphere.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Kobe Sin · Hong Kong</p>
+    <p class="muted">Public-layer descriptions only. Work details are written so they cannot identify an employer or an internal system.</p>
+  </footer>
+  <script src="./app.js"></script>
+</body>
+</html>
