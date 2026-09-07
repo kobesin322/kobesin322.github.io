@@ -12,17 +12,21 @@ type Props = {
   onSelect: (selection: Selection) => void;
 };
 
-function isActive(starId: string, selection: Selection): boolean {
-  if (selection.kind === "star") return selection.id === starId;
-  return false;
+function isFocused(starId: string, selection: Selection): boolean {
+  return (
+    (selection.kind === "star" || selection.kind === "world") && selection.id === starId
+  );
 }
 
 export function Star({ star, selection, onSelect }: Props) {
   const craft = useRef<Group>(null);
+  const root = useRef<Group>(null);
+  const scale = useRef(1);
   const [hovered, setHovered] = useState(false);
   const isHub = star.id === "hub";
-  const active = isActive(star.id, selection) || hovered;
-  const showLabel = isHub || hovered || active;
+  const entering = selection.kind === "world" && selection.id === star.id;
+  const active = isFocused(star.id, selection) || hovered;
+  const showLabel = !entering && (isHub || hovered || active);
   const down = useRef({ x: 0, y: 0 });
   const hitRadius = isHub ? 0.72 : 0.5;
 
@@ -32,13 +36,18 @@ export function Star({ star, selection, onSelect }: Props) {
   }, [isHub, star.position]);
 
   useFrame((_, delta) => {
-    if (craft.current && !isHub) {
+    if (craft.current && !isHub && !entering) {
       craft.current.rotateZ(delta * 0.1);
+    }
+    if (root.current) {
+      const goal = entering ? 7.5 : 1;
+      scale.current += (goal - scale.current) * Math.min(1, delta * 2.4);
+      root.current.scale.setScalar(scale.current);
     }
   });
 
   return (
-    <group position={star.position}>
+    <group ref={root} position={star.position}>
       {isHub ? (
         <HubCore color={star.color} luminosity={star.luminosity} active={active} />
       ) : (
@@ -64,6 +73,10 @@ export function Star({ star, selection, onSelect }: Props) {
           const dx = event.clientX - down.current.x;
           const dy = event.clientY - down.current.y;
           if (dx * dx + dy * dy > 25) return;
+          if (selection.kind === "star" && selection.id === star.id && star.world) {
+            onSelect({ kind: "world", id: star.id });
+            return;
+          }
           onSelect({ kind: "star", id: star.id });
         }}
       >
@@ -83,7 +96,11 @@ export function Star({ star, selection, onSelect }: Props) {
               style={{ borderColor: star.color, color: active ? star.color : undefined }}
             >
               {star.title}
-              {star.status === "concept" && <span style={{ color: star.color }}>concept</span>}
+              {star.world ? (
+                <span style={{ color: star.color }}>world</span>
+              ) : (
+                star.status === "concept" && <span style={{ color: star.color }}>concept</span>
+              )}
             </div>
           </Html>
         </Billboard>

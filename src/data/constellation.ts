@@ -1,4 +1,4 @@
-import type { EdgeLink, StarNode } from "../types";
+import type { EdgeLink, Selection, StarNode } from "../types";
 
 export const STARS: StarNode[] = [
   {
@@ -72,6 +72,7 @@ export const STARS: StarNode[] = [
     position: [-4.8, 2.6, 3.2],
     color: "#ff8a3d",
     luminosity: 0.7,
+    world: "trading",
     status: "concept",
     bullets: [
       "Journal and review loop for live trading ops.",
@@ -166,9 +167,15 @@ export function getEdge(id: string): EdgeLink {
   return edge;
 }
 
-export function parseSelectionHash(hash: string): { kind: "star" | "edge"; id: string } | null {
+export function parseSelectionHash(hash: string): Selection | null {
   const id = hash.replace(/^#/, "").trim();
   if (!id) return null;
+  if (id.startsWith("world/")) {
+    const worldId = id.slice(6);
+    const star = STAR_MAP[worldId];
+    if (star?.world === worldId) return { kind: "world", id: worldId };
+    return null;
+  }
   if (STAR_MAP[id]) return { kind: "star", id };
   if (EDGE_MAP[id]) return { kind: "edge", id };
   return null;

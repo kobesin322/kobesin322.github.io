@@ -60,7 +60,7 @@ export function CameraRig({ selection, reduceMotion }: Props) {
     <CameraControls
       ref={controls}
       makeDefault
-      minDistance={2.6}
+      minDistance={selection.kind === "world" ? 0.12 : 2.6}
       maxDistance={28}
       minPolarAngle={0.25}
       maxPolarAngle={Math.PI - 0.4}

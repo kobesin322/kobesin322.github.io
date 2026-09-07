@@ -15,6 +15,8 @@ export type StarNode = {
    * Used for glow scale, emissive intensity, and beam mix.
    */
   luminosity: number;
+  /** If set, a second click dives into this interior world. Pioneer: trading. */
+  world?: "trading";
   status: StarStatus;
   lede?: string;
   meta?: string[];
@@ -33,4 +35,5 @@ export type EdgeLink = {
 export type Selection =
   | { kind: "none" }
   | { kind: "star"; id: string }
-  | { kind: "edge"; id: string };
+  | { kind: "edge"; id: string }
+  | { kind: "world"; id: string };

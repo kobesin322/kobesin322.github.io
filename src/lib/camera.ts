@@ -36,6 +36,15 @@ export function lookAtForSelection(selection: Selection): LookAt {
     return { position: toVec3(position), target: star.position };
   }
 
+  if (selection.kind === "world") {
+    const star = getStar(selection.id);
+    const target = new Vector3(...star.position);
+    const radial =
+      target.lengthSq() < 0.04 ? new Vector3(0, 0.15, 1) : target.clone().normalize();
+    const position = target.clone().add(radial.multiplyScalar(0.42));
+    return { position: toVec3(position), target: star.position };
+  }
+
   const edge = getEdge(selection.id);
   const a = new Vector3(...getStar(edge.from).position);
   const b = new Vector3(...getStar(edge.to).position);
