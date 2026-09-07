@@ -28,7 +28,7 @@ export function Star({ star, selection, onSelect }: Props) {
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
-    craft.current.lookAt(0, 0.35, 0);
+    craft.current.lookAt(0, 2.2, 0);
   }, [isHub, star.position]);
 
   useFrame((_, delta) => {

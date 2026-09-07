@@ -2,10 +2,10 @@ import { Vector3 } from "three";
 import { getEdge, getStar } from "../data/constellation";
 import type { Selection, Vec3 } from "../types";
 
-export const OVERVIEW_POSITION: Vec3 = [9.4, 4.8, 11.2];
-export const OVERVIEW_TARGET: Vec3 = [0, -1.6, 0];
-export const INTRO_POSITION: Vec3 = [18.5, 11, 24];
-export const INTRO_TARGET: Vec3 = [0, -4.5, -2];
+export const OVERVIEW_POSITION: Vec3 = [10.2, 5.6, 12.4];
+export const OVERVIEW_TARGET: Vec3 = [0, 0.2, 0];
+export const INTRO_POSITION: Vec3 = [20, 12, 26];
+export const INTRO_TARGET: Vec3 = [0, -3.2, -2];
 
 export type LookAt = {
   position: Vec3;
@@ -25,7 +25,7 @@ export function lookAtForSelection(selection: Selection): LookAt {
     const star = getStar(selection.id);
     const target = new Vector3(...star.position);
     if (star.id === "hub") {
-      return { position: [4.4, 2.2, 5.2], target: [0, 0.35, 0] };
+      return { position: [4.8, 3.4, 5.6], target: [0, 2.2, 0] };
     }
     const radial =
       target.lengthSq() < 0.04 ? new Vector3(0, 0.2, 1) : target.clone().normalize();

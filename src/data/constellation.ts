@@ -6,7 +6,7 @@ export const STARS: StarNode[] = [
     title: "Kobe Sin",
     tagline: "Analyst Programmer · forecasts, dashboards, tools that compound",
     kicker: "Hong Kong · systems work",
-    position: [0, 0.35, 0],
+    position: [0, 2.2, 0],
     color: "#d4a017",
     status: "live",
     lede: "I build pipelines that turn messy operational data into a decision someone can act on. Same shape at work and after hours: contract the data, fail loudly, put the next action on a screen.",
@@ -36,7 +36,7 @@ export const STARS: StarNode[] = [
     title: "Forecasting",
     tagline: "Load forecasting · ML ops",
     kicker: "ML · Operations",
-    position: [4.6, 2.1, -3.8],
+    position: [4.6, 4.1, -3.8],
     color: "#8faf6a",
     status: "concept",
     bullets: [
@@ -51,7 +51,7 @@ export const STARS: StarNode[] = [
     title: "Dashboards",
     tagline: "Learning analytics · product views",
     kicker: "Product · Analytics",
-    position: [3.8, -3.2, 3.6],
+    position: [3.8, 0.2, 3.6],
     color: "#8faf6a",
     status: "concept",
     bullets: [
@@ -66,7 +66,7 @@ export const STARS: StarNode[] = [
     title: "Trading",
     tagline: "Trade Road · journal and review",
     kicker: "Side · Trading ops",
-    position: [-4.8, 2.6, 3.2],
+    position: [-4.8, 4.6, 3.2],
     color: "#8faf6a",
     status: "concept",
     bullets: [
@@ -81,7 +81,7 @@ export const STARS: StarNode[] = [
     title: "Agents",
     tagline: "Daily digest · structured extract",
     kicker: "Side · Agents",
-    position: [-3.4, -2.2, 4.8],
+    position: [-3.4, 1.2, 4.8],
     color: "#8faf6a",
     status: "concept",
     bullets: [
@@ -95,7 +95,7 @@ export const STARS: StarNode[] = [
     title: "Geo",
     tagline: "GeoMock · regional tells",
     kicker: "Side · Geo",
-    position: [1.2, 4.8, -3.6],
+    position: [1.2, 6.8, -3.6],
     color: "#8faf6a",
     status: "concept",
     bullets: [
@@ -110,7 +110,7 @@ export const STARS: StarNode[] = [
     title: "Craft",
     tagline: "Live demos · widgets that run",
     kicker: "Demos",
-    position: [-2.6, -4.4, -3.4],
+    position: [-2.6, -0.6, -3.4],
     color: "#8faf6a",
     status: "concept",
     bullets: [
