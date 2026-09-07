@@ -40,6 +40,10 @@ export function Edge({ edge, selection, onSelect }: Props) {
   const { tube, halo, pick, curve } = useMemo(() => {
     const start = new Vector3(...from.position);
     const end = new Vector3(...to.position);
+    const dir = end.clone().sub(start);
+    const trim = Math.min(0.62, dir.length() * 0.12);
+    start.add(dir.clone().normalize().multiplyScalar(trim));
+    end.add(dir.clone().normalize().multiplyScalar(-trim));
     const mid = start.clone().lerp(end, 0.5);
     const bulge = mid.clone();
     if (bulge.lengthSq() < 0.02) bulge.set(0, 1, 0);
@@ -50,7 +54,7 @@ export function Edge({ edge, selection, onSelect }: Props) {
       curve: path,
       tube: new TubeGeometry(path, 56, 0.026, 8, false),
       halo: new TubeGeometry(path, 40, 0.08, 8, false),
-      pick: new TubeGeometry(path, 20, 0.16, 6, false),
+      pick: new TubeGeometry(path, 20, 0.14, 6, false),
     };
   }, [from.position, to.position]);
 

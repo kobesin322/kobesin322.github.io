@@ -24,7 +24,7 @@ export function Star({ star, selection, onSelect }: Props) {
   const active = isActive(star.id, selection) || hovered;
   const showLabel = isHub || hovered || active;
   const down = useRef({ x: 0, y: 0 });
-  const hitRadius = isHub ? 0.55 : 0.48;
+  const hitRadius = isHub ? 0.78 : 0.52;
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
