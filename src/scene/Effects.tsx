@@ -3,14 +3,14 @@ import { KernelSize } from "postprocessing";
 
 export function Effects() {
   return (
-    <EffectComposer multisampling={0}>
+    <EffectComposer multisampling={0} enableNormalPass={false}>
       <Bloom
-        luminanceThreshold={0.18}
-        intensity={0.85}
+        luminanceThreshold={0.42}
+        intensity={0.42}
         mipmapBlur
-        kernelSize={KernelSize.LARGE}
+        kernelSize={KernelSize.MEDIUM}
       />
-      <Vignette offset={0.28} darkness={0.62} />
+      <Vignette offset={0.32} darkness={0.48} />
     </EffectComposer>
   );
 }

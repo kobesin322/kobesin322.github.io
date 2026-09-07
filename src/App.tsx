@@ -52,16 +52,17 @@ export default function App() {
       <div className="canvas-wrap">
         <Canvas
           camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 200 }}
-          dpr={[1, 1.5]}
+          dpr={[1, 1.25]}
           gl={{
             antialias: true,
             alpha: false,
             toneMapping: ACESFilmicToneMapping,
             outputColorSpace: SRGBColorSpace,
+            powerPreference: "high-performance",
           }}
           onCreated={({ gl }) => {
-            gl.setClearColor("#05060a");
-            gl.toneMappingExposure = 1.05;
+            gl.setClearColor("#05070c");
+            gl.toneMappingExposure = 1.0;
           }}
         >
           <Experience selection={selection} onSelect={select} reduceMotion={reduceMotion} />
