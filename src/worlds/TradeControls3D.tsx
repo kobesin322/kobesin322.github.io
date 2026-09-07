@@ -159,7 +159,6 @@ function RailKnob({
         {label}
       </Text>
         <Text
-          key={display}
           position={[0, y1 + 0.34, 0]}
         fontSize={0.12}
         color={color}
@@ -216,7 +215,6 @@ function StatCard({
           {label}
         </Text>
         <Text
-          key={value}
           position={[0, -0.08, 0.045]}
           fontSize={0.16}
           color={color}
