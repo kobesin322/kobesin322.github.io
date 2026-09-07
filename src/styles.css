@@ -229,11 +229,23 @@ a { color: inherit; }
   color: inherit;
 }
 
+.veil {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 45%, #ff8a3d 0%, #041018 62%);
+  transition: opacity 0.45s ease;
+}
+.veil.is-on { opacity: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   .panel {
     transition: none;
     transform: none;
   }
+  .veil { transition: none; }
 }
 
 @media (max-width: 800px) {

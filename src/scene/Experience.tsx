@@ -1,4 +1,5 @@
 import type { Selection } from "../types";
+import { lodFor } from "../lib/sceneLod";
 import { CameraRig } from "./CameraRig";
 import { Constellation } from "./Constellation";
 import { Effects } from "./Effects";
@@ -8,15 +9,30 @@ type Props = {
   selection: Selection;
   onSelect: (selection: Selection) => void;
   reduceMotion: boolean;
+  snapCamera?: boolean;
+  onSnapApplied?: () => void;
 };
 
-export function Experience({ selection, onSelect, reduceMotion }: Props) {
+export function Experience({
+  selection,
+  onSelect,
+  reduceMotion,
+  snapCamera = false,
+  onSnapApplied,
+}: Props) {
+  const lod = lodFor(selection);
+
   return (
     <>
-      <SpaceBackdrop />
-      <CameraRig selection={selection} reduceMotion={reduceMotion} />
+      <SpaceBackdrop lod={lod} />
+      <CameraRig
+        selection={selection}
+        reduceMotion={reduceMotion}
+        snap={snapCamera}
+        onSnapApplied={onSnapApplied}
+      />
       <Constellation selection={selection} onSelect={onSelect} />
-      <Effects />
+      {lod !== "dive" && <Effects quality={lod === "overview" ? "full" : "lean"} />}
     </>
   );
 }

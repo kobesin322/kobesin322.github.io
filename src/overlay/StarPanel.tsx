@@ -1,25 +1,45 @@
+import { useEffect, useState } from "react";
 import { getEdge, getStar } from "../data/constellation";
 import type { Selection } from "../types";
 
 type Props = {
   selection: Selection;
   onClose: () => void;
+  onEnterWorld: (id: string) => void;
 };
 
-export function StarPanel({ selection, onClose }: Props) {
+export function StarPanel({ selection, onClose, onEnterWorld }: Props) {
   const open = selection.kind !== "none";
+  const [held, setHeld] = useState(selection);
+
+  useEffect(() => {
+    if (selection.kind !== "none") setHeld(selection);
+  }, [selection]);
+
+  const view = open ? selection : held;
 
   return (
     <aside className={`panel${open ? " is-open" : ""}`} aria-hidden={!open}>
-      {selection.kind === "star" && <StarBody id={selection.id} onClose={onClose} />}
-      {selection.kind === "edge" && <EdgeBody id={selection.id} onClose={onClose} />}
+      {view.kind === "star" && (
+        <StarBody id={view.id} onClose={onClose} onEnterWorld={onEnterWorld} />
+      )}
+      {view.kind === "edge" && <EdgeBody id={view.id} onClose={onClose} />}
     </aside>
   );
 }
 
-function StarBody({ id, onClose }: { id: string; onClose: () => void }) {
+function StarBody({
+  id,
+  onClose,
+  onEnterWorld,
+}: {
+  id: string;
+  onClose: () => void;
+  onEnterWorld: (id: string) => void;
+}) {
   const star = getStar(id);
   const isHub = star.status === "live";
+  const canEnter = Boolean(star.world);
 
   return (
     <div
@@ -44,7 +64,10 @@ function StarBody({ id, onClose }: { id: string; onClose: () => void }) {
           ))}
         </div>
       )}
-      {!isHub && <p className="concept-note">Concept — interior later</p>}
+      {!isHub && !canEnter && <p className="concept-note">Concept — interior later</p>}
+      {canEnter && (
+        <p className="concept-note">Pioneer world — click the star again to go inside</p>
+      )}
       <ul className="panel-bullets">
         {star.bullets.map((bullet) => (
           <li key={bullet}>{bullet}</li>
@@ -66,6 +89,11 @@ function StarBody({ id, onClose }: { id: string; onClose: () => void }) {
             </div>
           ))}
         </div>
+      )}
+      {canEnter && (
+        <button type="button" className="ghost panel-close" onClick={() => onEnterWorld(star.id)}>
+          Enter world
+        </button>
       )}
       <button type="button" className="ghost panel-close" onClick={onClose}>
         Return to network

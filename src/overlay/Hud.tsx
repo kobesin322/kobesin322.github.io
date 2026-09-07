@@ -1,21 +1,35 @@
+import type { Selection } from "../types";
+import { getStar } from "../data/constellation";
+
 type Props = {
-  hasSelection: boolean;
-  onReturn: () => void;
+  selection: Selection;
+  onHome: () => void;
+  onBack: () => void;
 };
 
-export function Hud({ hasSelection, onReturn }: Props) {
+function hint(selection: Selection): string {
+  if (selection.kind === "world") return "Orbit the pit · drag stop, entry, target";
+  if (selection.kind === "star") {
+    const star = getStar(selection.id);
+    if (star.world) return "Click the star again to go inside";
+    return "Return to the network";
+  }
+  if (selection.kind === "edge") return "Return to the network";
+  return "Drag to orbit · click a craft or a beam";
+}
+
+export function Hud({ selection, onHome, onBack }: Props) {
+  const away = selection.kind !== "none";
   return (
     <header className="hud">
-      <button type="button" className="mark" onClick={onReturn}>
+      <button type="button" className="mark" onClick={onHome}>
         KS
       </button>
-      <p className="hud-hint">
-        {hasSelection ? "Return to the network" : "Drag to orbit · click a craft or a beam"}
-      </p>
+      <p className="hud-hint">{hint(selection)}</p>
       <div className="hud-actions">
-        {hasSelection && (
-          <button type="button" className="ghost" onClick={onReturn}>
-            Return
+        {away && (
+          <button type="button" className="ghost" onClick={onBack}>
+            {selection.kind === "world" ? "Leave world" : "Return"}
           </button>
         )}
         <a className="ghost" href="https://github.com/kobesin322" target="_blank" rel="noreferrer">
