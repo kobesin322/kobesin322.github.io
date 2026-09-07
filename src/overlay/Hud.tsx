@@ -10,7 +10,7 @@ export function Hud({ hasSelection, onReturn }: Props) {
         KS
       </button>
       <p className="hud-hint">
-        {hasSelection ? "Return to the network" : "Click a star or a link"}
+        {hasSelection ? "Return to the network" : "Drag to orbit · click a craft or a beam"}
       </p>
       <div className="hud-actions">
         {hasSelection && (

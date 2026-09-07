@@ -1,6 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 import { useCallback, useEffect, useState } from "react";
+import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { parseSelectionHash } from "./data/constellation";
+import { INTRO_POSITION } from "./lib/camera";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
 import { Hud } from "./overlay/Hud";
 import { StarPanel } from "./overlay/StarPanel";
@@ -49,11 +51,17 @@ export default function App() {
       <div className="noise" aria-hidden="true" />
       <div className="canvas-wrap">
         <Canvas
-          camera={{ position: [0, 2.2, 13], fov: 45, near: 0.1, far: 80 }}
+          camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 200 }}
           dpr={[1, 1.5]}
-          gl={{ antialias: true, alpha: false }}
+          gl={{
+            antialias: true,
+            alpha: false,
+            toneMapping: ACESFilmicToneMapping,
+            outputColorSpace: SRGBColorSpace,
+          }}
           onCreated={({ gl }) => {
-            gl.setClearColor("#0b0c0a");
+            gl.setClearColor("#05060a");
+            gl.toneMappingExposure = 1.05;
           }}
         >
           <Experience selection={selection} onSelect={select} reduceMotion={reduceMotion} />

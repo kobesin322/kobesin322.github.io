@@ -1,6 +1,7 @@
 import type { Selection } from "../types";
 import { CameraRig } from "./CameraRig";
 import { Constellation } from "./Constellation";
+import { Effects } from "./Effects";
 import { SpaceBackdrop } from "./SpaceBackdrop";
 
 type Props = {
@@ -15,6 +16,7 @@ export function Experience({ selection, onSelect, reduceMotion }: Props) {
       <SpaceBackdrop />
       <CameraRig selection={selection} reduceMotion={reduceMotion} />
       <Constellation selection={selection} onSelect={onSelect} />
+      <Effects />
     </>
   );
 }
