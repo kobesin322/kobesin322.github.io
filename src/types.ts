@@ -1,0 +1,30 @@
+export type Vec3 = [number, number, number];
+
+export type StarStatus = "live" | "concept";
+
+export type StarNode = {
+  id: string;
+  title: string;
+  tagline: string;
+  kicker?: string;
+  position: Vec3;
+  color: string;
+  status: StarStatus;
+  lede?: string;
+  meta?: string[];
+  bullets: string[];
+  chips?: string[];
+  stack?: { title: string; body: string }[];
+};
+
+export type EdgeLink = {
+  id: string;
+  from: string;
+  to: string;
+  label: string;
+};
+
+export type Selection =
+  | { kind: "none" }
+  | { kind: "star"; id: string }
+  | { kind: "edge"; id: string };
