@@ -28,7 +28,9 @@ export default function App() {
   const [worldReady, setWorldReady] = useState(false);
   const [snapCamera, setSnapCamera] = useState(false);
   const [exitVeil, setExitVeil] = useState(false);
+  const [enterVeil, setEnterVeil] = useState(false);
   const veilTimer = useRef(0);
+  const enterTimer = useRef(0);
 
   const select = useCallback((next: Selection) => {
     setSelection(next);
@@ -46,7 +48,10 @@ export default function App() {
     veilTimer.current = window.setTimeout(() => setExitVeil(false), 280);
   }, []);
 
-  useEffect(() => () => window.clearTimeout(veilTimer.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(veilTimer.current);
+    window.clearTimeout(enterTimer.current);
+  }, []);
 
   const home = useCallback(() => {
     if (selection.kind === "world") coverExit();
@@ -76,6 +81,16 @@ export default function App() {
   }, [selection, reduceMotion]);
 
   useEffect(() => {
+    if (!(worldReady && selection.kind === "world")) {
+      setEnterVeil(false);
+      return;
+    }
+    setEnterVeil(true);
+    window.clearTimeout(enterTimer.current);
+    enterTimer.current = window.setTimeout(() => setEnterVeil(false), 240);
+  }, [worldReady, selection.kind]);
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") back();
     };
@@ -91,7 +106,7 @@ export default function App() {
   }, [back, select]);
 
   const insideTrading = worldReady && selection.kind === "world" && selection.id === "trading";
-  const diving = (selection.kind === "world" && !worldReady) || exitVeil;
+  const diving = (selection.kind === "world" && !worldReady) || enterVeil || exitVeil;
 
   return (
     <>

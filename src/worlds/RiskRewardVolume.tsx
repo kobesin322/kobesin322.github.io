@@ -78,6 +78,7 @@ function LevelHandle({
           <meshBasicMaterial color={color} transparent opacity={0.35} toneMapped={false} />
         </mesh>
         <Text
+          key={label}
           position={[0.36, 0, 0]}
           fontSize={0.1}
           color={color}
