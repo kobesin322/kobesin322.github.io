@@ -8,7 +8,6 @@ import { Hud } from "./overlay/Hud";
 import { StarPanel } from "./overlay/StarPanel";
 import { Experience } from "./scene/Experience";
 import type { Selection } from "./types";
-import { TradingDesk } from "./worlds/TradingDesk";
 import { TradingScene } from "./worlds/TradingScene";
 
 function writeHash(selection: Selection) {
@@ -114,7 +113,7 @@ export default function App() {
           }}
         >
           {insideTrading ? (
-            <TradingScene />
+            <TradingScene reduceMotion={reduceMotion} />
           ) : (
             <Experience
               selection={selection}
@@ -131,7 +130,6 @@ export default function App() {
       {!insideTrading && selection.kind !== "world" && (
         <StarPanel selection={selection} onClose={back} onEnterWorld={(id) => select({ kind: "world", id })} />
       )}
-      {insideTrading && <TradingDesk />}
     </>
   );
 }
