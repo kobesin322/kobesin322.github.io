@@ -22,7 +22,12 @@ function StarBody({ id, onClose }: { id: string; onClose: () => void }) {
   const isHub = star.status === "live";
 
   return (
-    <div className="panel-inner" role="dialog" aria-labelledby="panel-title">
+    <div
+      className="panel-inner"
+      role="dialog"
+      aria-labelledby="panel-title"
+      style={{ ["--accent" as string]: star.color }}
+    >
       <p className="kicker">
         <span className="dot" />
         {star.kicker ?? (isHub ? "Hub" : "Concept star")}
@@ -75,7 +80,12 @@ function EdgeBody({ id, onClose }: { id: string; onClose: () => void }) {
   const to = getStar(edge.to);
 
   return (
-    <div className="panel-inner" role="dialog" aria-labelledby="panel-title">
+    <div
+      className="panel-inner"
+      role="dialog"
+      aria-labelledby="panel-title"
+      style={{ ["--accent" as string]: from.color }}
+    >
       <p className="kicker">
         <span className="dot" />
         Link

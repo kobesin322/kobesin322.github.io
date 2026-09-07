@@ -24,26 +24,26 @@ export function Star({ star, selection, onSelect }: Props) {
   const active = isActive(star.id, selection) || hovered;
   const showLabel = isHub || hovered || active;
   const down = useRef({ x: 0, y: 0 });
-  const hitRadius = isHub ? 0.78 : 0.52;
+  const hitRadius = isHub ? 0.72 : 0.5;
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
-    craft.current.lookAt(0, 2.2, 0);
+    craft.current.lookAt(0, 0, 0);
   }, [isHub, star.position]);
 
   useFrame((_, delta) => {
     if (craft.current && !isHub) {
-      craft.current.rotateZ(delta * 0.12);
+      craft.current.rotateZ(delta * 0.1);
     }
   });
 
   return (
     <group position={star.position}>
       {isHub ? (
-        <HubCore active={active} />
+        <HubCore color={star.color} luminosity={star.luminosity} active={active} />
       ) : (
         <group ref={craft}>
-          <SatelliteCraft color={star.color} active={active} />
+          <SatelliteCraft color={star.color} luminosity={star.luminosity} active={active} />
         </group>
       )}
       <mesh
@@ -71,16 +71,19 @@ export function Star({ star, selection, onSelect }: Props) {
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {showLabel && (
-        <Billboard follow position={[0, isHub ? 1.05 : 0.62, 0]}>
+        <Billboard follow position={[0, isHub ? 1.0 : 0.58, 0]}>
           <Html
             center
             distanceFactor={9}
             style={{ pointerEvents: "none" }}
             zIndexRange={[20, 0]}
           >
-            <div className={`star-tag${active ? " is-on" : ""}`}>
+            <div
+              className={`star-tag${active ? " is-on" : ""}`}
+              style={{ borderColor: star.color, color: active ? star.color : undefined }}
+            >
               {star.title}
-              {star.status === "concept" && <span>concept</span>}
+              {star.status === "concept" && <span style={{ color: star.color }}>concept</span>}
             </div>
           </Html>
         </Billboard>

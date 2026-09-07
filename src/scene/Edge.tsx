@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   AdditiveBlending,
-  Color,
   QuadraticBezierCurve3,
   TubeGeometry,
   Vector3,
   type Sprite,
 } from "three";
 import { getStar } from "../data/constellation";
+import { beamColor } from "../lib/color";
 import type { EdgeLink, Selection } from "../types";
 import { getGlowTexture } from "./textures";
 
@@ -35,9 +35,13 @@ export function Edge({ edge, selection, onSelect }: Props) {
   const active = edgeIsActive(edge, selection) || hovered;
   const glowMap = useMemo(() => getGlowTexture(), []);
   const phase = useMemo(() => edge.id.length * 0.17, [edge.id]);
-  const tint = useMemo(() => new Color(active ? "#d4a017" : "#6d8a4f"), [active]);
+  const luminosity = Math.min(from.luminosity, to.luminosity) * 0.85;
+  const tint = useMemo(
+    () => beamColor(from.color, to.color, luminosity, active),
+    [from.color, to.color, luminosity, active],
+  );
 
-  const { tube, halo, pick, curve } = useMemo(() => {
+  const { tube, pick, curve } = useMemo(() => {
     const start = new Vector3(...from.position);
     const end = new Vector3(...to.position);
     const dir = end.clone().sub(start);
@@ -48,48 +52,36 @@ export function Edge({ edge, selection, onSelect }: Props) {
     const bulge = mid.clone();
     if (bulge.lengthSq() < 0.02) bulge.set(0, 1, 0);
     else bulge.normalize();
-    mid.add(bulge.multiplyScalar(1.2));
+    mid.add(bulge.multiplyScalar(1.05));
     const path = new QuadraticBezierCurve3(start, mid, end);
     return {
       curve: path,
-      tube: new TubeGeometry(path, 56, 0.026, 8, false),
-      halo: new TubeGeometry(path, 40, 0.08, 8, false),
-      pick: new TubeGeometry(path, 20, 0.14, 6, false),
+      tube: new TubeGeometry(path, 32, 0.022, 6, false),
+      pick: new TubeGeometry(path, 12, 0.13, 5, false),
     };
   }, [from.position, to.position]);
 
   useEffect(
     () => () => {
       tube.dispose();
-      halo.dispose();
       pick.dispose();
     },
-    [tube, halo, pick],
+    [tube, pick],
   );
 
   useFrame(({ clock }) => {
     if (!spark.current) return;
-    const t = (clock.elapsedTime * (active ? 0.22 : 0.1) + phase) % 1;
+    const t = (clock.elapsedTime * (active ? 0.18 : 0.08) + phase) % 1;
     spark.current.position.copy(curve.getPointAt(t));
   });
 
   return (
     <group>
-      <mesh geometry={halo}>
-        <meshBasicMaterial
-          color={tint}
-          transparent
-          opacity={active ? 0.22 : 0.08}
-          blending={AdditiveBlending}
-          depthWrite={false}
-          toneMapped={false}
-        />
-      </mesh>
       <mesh geometry={tube}>
         <meshBasicMaterial
           color={tint}
           transparent
-          opacity={active ? 0.95 : 0.45}
+          opacity={active ? 0.9 : 0.38}
           blending={AdditiveBlending}
           depthWrite={false}
           toneMapped={false}
@@ -119,12 +111,12 @@ export function Edge({ edge, selection, onSelect }: Props) {
       >
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <sprite ref={spark} scale={active ? [0.55, 0.55, 1] : [0.32, 0.32, 1]} renderOrder={3}>
+      <sprite ref={spark} scale={active ? [0.42, 0.42, 1] : [0.24, 0.24, 1]} renderOrder={3}>
         <spriteMaterial
           map={glowMap}
           color={tint}
           transparent
-          opacity={0.95}
+          opacity={0.85}
           blending={AdditiveBlending}
           depthWrite={false}
           toneMapped={false}

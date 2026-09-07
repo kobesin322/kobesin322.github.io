@@ -1,20 +1,13 @@
 import { useEffect, useRef } from "react";
 import { CameraControls } from "@react-three/drei";
 import type CameraControlsImpl from "camera-controls";
-import { Vector3 } from "three";
-import {
-  INTRO_POSITION,
-  INTRO_TARGET,
-  lookAtForSelection,
-} from "../lib/camera";
+import { INTRO_POSITION, INTRO_TARGET, lookAtForSelection } from "../lib/camera";
 import type { Selection } from "../types";
 
 type Props = {
   selection: Selection;
   reduceMotion: boolean;
 };
-
-const scratch = new Vector3();
 
 export function CameraRig({ selection, reduceMotion }: Props) {
   const controls = useRef<CameraControlsImpl>(null);
@@ -25,7 +18,11 @@ export function CameraRig({ selection, reduceMotion }: Props) {
     if (!rig) return;
     let cancelled = false;
 
-    const look = (position: [number, number, number], target: [number, number, number], animate: boolean) =>
+    const fly = (
+      position: [number, number, number],
+      target: [number, number, number],
+      animate: boolean,
+    ) =>
       rig.setLookAt(
         position[0],
         position[1],
@@ -38,16 +35,16 @@ export function CameraRig({ selection, reduceMotion }: Props) {
 
     if (selection.kind !== "none") {
       const { position, target } = lookAtForSelection(selection);
-      void look(position, target, !reduceMotion);
+      void fly(position, target, !reduceMotion);
       return;
     }
 
     const overview = lookAtForSelection({ kind: "none" });
     if (!didIntro.current && !reduceMotion) {
       didIntro.current = true;
-      void look(INTRO_POSITION, INTRO_TARGET, false);
+      void fly(INTRO_POSITION, INTRO_TARGET, false);
       const id = window.requestAnimationFrame(() => {
-        if (!cancelled) void look(overview.position, overview.target, true);
+        if (!cancelled) void fly(overview.position, overview.target, true);
       });
       return () => {
         cancelled = true;
@@ -56,35 +53,19 @@ export function CameraRig({ selection, reduceMotion }: Props) {
     }
 
     didIntro.current = true;
-    if (reduceMotion) {
-      void look(overview.position, overview.target, false);
-      return;
-    }
-
-    rig.getPosition(scratch);
-    const lift: [number, number, number] = [
-      scratch.x * 0.55 + overview.position[0] * 0.45,
-      Math.max(scratch.y, 6.5) + 2.4,
-      scratch.z * 0.55 + overview.position[2] * 0.45,
-    ];
-    void look(lift, [0, 2.2, 0], true).then(() => {
-      if (!cancelled) void look(overview.position, overview.target, true);
-    });
-    return () => {
-      cancelled = true;
-    };
+    void fly(overview.position, overview.target, !reduceMotion);
   }, [selection, reduceMotion]);
 
   return (
     <CameraControls
       ref={controls}
       makeDefault
-      minDistance={2.8}
-      maxDistance={42}
-      minPolarAngle={0.2}
-      maxPolarAngle={Math.PI - 0.35}
-      smoothTime={0.7}
-      draggingSmoothTime={0.16}
+      minDistance={2.6}
+      maxDistance={28}
+      minPolarAngle={0.25}
+      maxPolarAngle={Math.PI - 0.4}
+      smoothTime={1.15}
+      draggingSmoothTime={0.22}
     />
   );
 }

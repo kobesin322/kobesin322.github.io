@@ -98,7 +98,7 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--moss);
+  color: var(--accent, var(--moss));
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -109,8 +109,8 @@ a { color: inherit; }
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--moss);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--moss) 22%, transparent);
+  background: var(--accent, var(--moss));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent, var(--moss)) 22%, transparent);
 }
 
 .lede { max-width: 40em; color: #c9c7bb; font-size: 16px; margin: 0 0 14px; }
@@ -162,7 +162,7 @@ a { color: inherit; }
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent, var(--gold));
   margin: 0 0 12px;
 }
 .panel-bullets {
@@ -221,12 +221,12 @@ a { color: inherit; }
   align-items: center;
 }
 .star-tag span {
-  color: var(--gold);
+  color: inherit;
   font-size: 9px;
+  opacity: 0.8;
 }
 .star-tag.is-on {
-  border-color: var(--gold);
-  color: var(--gold);
+  color: inherit;
 }
 
 @media (prefers-reduced-motion: reduce) {

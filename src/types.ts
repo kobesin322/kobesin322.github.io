@@ -8,7 +8,13 @@ export type StarNode = {
   tagline: string;
   kicker?: string;
   position: Vec3;
+  /** Display / emissive hex. */
   color: string;
+  /**
+   * Relative brightness 0–1. Hub is 1 so it always outshines domain stars.
+   * Used for glow scale, emissive intensity, and beam mix.
+   */
+  luminosity: number;
   status: StarStatus;
   lede?: string;
   meta?: string[];
