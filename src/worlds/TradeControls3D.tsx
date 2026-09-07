@@ -46,6 +46,7 @@ function Nudge({
         onPointerOver={(event) => {
           event.stopPropagation();
           setHot(true);
+          lockOrbit(controls, false);
           document.body.style.cursor = "pointer";
         }}
         onPointerOut={() => {
@@ -94,9 +95,10 @@ function RailKnob({
   nudge,
 }: KnobProps) {
   const y = valueToY(value, y0, y1, min, max);
-  const { begin } = useYDrag((worldY) => {
+  const { begin, dragging } = useYDrag((worldY) => {
     onChange(yToValue(worldY, y0, y1, min, max));
   });
+  const { controls } = useThree();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -110,18 +112,21 @@ function RailKnob({
         onPointerOver={(event) => {
           event.stopPropagation();
           setHovered(true);
+          lockOrbit(controls, false);
           document.body.style.cursor = "ns-resize";
         }}
         onPointerOut={() => {
           setHovered(false);
+          if (!dragging.current) lockOrbit(controls, true);
           document.body.style.cursor = "auto";
         }}
         onPointerDown={(event) => {
           event.stopPropagation();
+          lockOrbit(controls, false);
           begin(y);
         }}
       >
-        <sphereGeometry args={[hovered ? 0.13 : 0.11, 20, 16]} />
+        <sphereGeometry args={[hovered ? 0.16 : 0.14, 20, 16]} />
         <meshStandardMaterial
           color={color}
           emissive={color}

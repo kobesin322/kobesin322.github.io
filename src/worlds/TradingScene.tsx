@@ -25,11 +25,15 @@ function DeskCamera({ reduceMotion }: { reduceMotion: boolean }) {
     const rig = controls.current;
     if (!rig) return;
     void rig.setLookAt(4.2, 2.45, 5.8, 0.1, 1.15, 0, false);
-    const onStart = () => {
+    const stopIdle = () => {
       idle.current = false;
     };
-    rig.addEventListener("controlstart", onStart);
-    return () => rig.removeEventListener("controlstart", onStart);
+    rig.addEventListener("controlstart", stopIdle);
+    const timer = window.setTimeout(stopIdle, 2200);
+    return () => {
+      rig.removeEventListener("controlstart", stopIdle);
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useFrame((_, delta) => {

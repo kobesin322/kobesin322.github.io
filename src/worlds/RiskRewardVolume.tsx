@@ -1,8 +1,9 @@
+import { Billboard, Text } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import { useState } from "react";
-import { Text } from "@react-three/drei";
 import type { TradeDraft, TradeMath } from "./tradeMath";
 import { PRICE_MAX, PRICE_MIN, priceForY, roundPrice, yForPrice } from "./chartScale";
-import { useYDrag } from "./useYDrag";
+import { lockOrbit, useYDrag } from "./useYDrag";
 
 type Props = {
   draft: TradeDraft;
@@ -23,7 +24,8 @@ function LevelHandle({
   label: string;
   onY: (worldY: number) => void;
 }) {
-  const { begin } = useYDrag(onY);
+  const { begin, dragging } = useYDrag(onY);
+  const { controls } = useThree();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -43,37 +45,40 @@ function LevelHandle({
         <cylinderGeometry args={[0.018, 0.018, 0.44, 8]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.55} toneMapped={false} />
       </mesh>
-      <group position={[0.98, 0, 0]}>
-        <mesh raycast={skipRaycast}>
-          <sphereGeometry args={[hovered ? 0.13 : 0.11, 20, 16]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={hovered ? 1.3 : 0.85}
-            roughness={0.22}
-            toneMapped={false}
-          />
-        </mesh>
+      <Billboard position={[1.08, 0, 0]} follow>
         <mesh
           onPointerOver={(event) => {
             event.stopPropagation();
             setHovered(true);
+            lockOrbit(controls, false);
             document.body.style.cursor = "ns-resize";
           }}
           onPointerOut={() => {
             setHovered(false);
+            if (!dragging.current) lockOrbit(controls, true);
             document.body.style.cursor = "auto";
           }}
           onPointerDown={(event) => {
             event.stopPropagation();
+            lockOrbit(controls, false);
             begin(y);
           }}
         >
-          <sphereGeometry args={[0.22, 16, 12]} />
-          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+          <circleGeometry args={[hovered ? 0.2 : 0.175, 28]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={hovered ? 1.35 : 0.9}
+            roughness={0.22}
+            toneMapped={false}
+          />
+        </mesh>
+        <mesh raycast={skipRaycast}>
+          <ringGeometry args={[0.175, 0.22, 28]} />
+          <meshBasicMaterial color={color} transparent opacity={0.35} toneMapped={false} />
         </mesh>
         <Text
-          position={[0.28, 0, 0]}
+          position={[0.36, 0, 0]}
           fontSize={0.1}
           color={color}
           anchorX="left"
@@ -84,7 +89,7 @@ function LevelHandle({
         >
           {label}
         </Text>
-      </group>
+      </Billboard>
     </group>
   );
 }
