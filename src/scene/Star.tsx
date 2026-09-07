@@ -91,7 +91,7 @@ export function Star({ star, selection, onSelect }: Props) {
         </mesh>
       )}
       {showLabel && (
-        <Billboard follow>
+        <Billboard follow position={[0, radius + 0.42, 0]}>
           <Html
             center
             distanceFactor={7.5}
