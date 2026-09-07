@@ -28,46 +28,63 @@ function LevelHandle({
 
   return (
     <group position={[0, y, 0]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.46, hovered ? 0.05 : 0.032, 10, 40]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} raycast={skipRaycast}>
+        <torusGeometry args={[0.5, 0.028, 10, 40]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={hovered ? 1.25 : 0.72}
+          emissiveIntensity={0.7}
           roughness={0.28}
           metalness={0.2}
           toneMapped={false}
         />
       </mesh>
-      <mesh
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = "ns-resize";
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          document.body.style.cursor = "auto";
-        }}
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          begin();
-        }}
-      >
-        <boxGeometry args={[1.55, 0.18, 0.9]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      <mesh position={[0.7, 0, 0]} rotation={[0, 0, Math.PI / 2]} raycast={skipRaycast}>
+        <cylinderGeometry args={[0.018, 0.018, 0.44, 8]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.55} toneMapped={false} />
       </mesh>
-      <Text
-        position={[0.72, 0.02, 0.12]}
-        fontSize={0.095}
-        color={color}
-        anchorX="left"
-        anchorY="middle"
-        outlineWidth={0.006}
-        outlineColor="#031016"
-      >
-        {label}
-      </Text>
+      <group position={[0.98, 0, 0]}>
+        <mesh raycast={skipRaycast}>
+          <sphereGeometry args={[hovered ? 0.13 : 0.11, 20, 16]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={hovered ? 1.3 : 0.85}
+            roughness={0.22}
+            toneMapped={false}
+          />
+        </mesh>
+        <mesh
+          onPointerOver={(event) => {
+            event.stopPropagation();
+            setHovered(true);
+            document.body.style.cursor = "ns-resize";
+          }}
+          onPointerOut={() => {
+            setHovered(false);
+            document.body.style.cursor = "auto";
+          }}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            begin(y);
+          }}
+        >
+          <sphereGeometry args={[0.22, 16, 12]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        </mesh>
+        <Text
+          position={[0.28, 0, 0]}
+          fontSize={0.1}
+          color={color}
+          anchorX="left"
+          anchorY="middle"
+          outlineWidth={0.006}
+          outlineColor="#031016"
+          raycast={skipRaycast}
+        >
+          {label}
+        </Text>
+      </group>
     </group>
   );
 }
@@ -78,13 +95,12 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
   const yTarget = yForPrice(draft.target);
   const riskH = Math.max(0.07, Math.abs(yEntry - yStop));
   const rewardH = Math.max(0.07, Math.abs(yEntry - yTarget));
-  const rewardW = 0.7 * Math.min(2.15, Math.max(0.55, math.rr / 1.85));
-  const rewardD = 0.42 * Math.min(3.1, Math.max(0.55, math.rr / 1.55));
+  const rewardD = 0.38 * Math.min(3.4, Math.max(0.7, math.rr / 1.45));
 
   return (
     <group position={[0, 0, -0.15]}>
       <mesh position={[0, 1.42, 0]} raycast={skipRaycast}>
-        <boxGeometry args={[1.55, 2.55, 1.05]} />
+        <boxGeometry args={[1.55, 2.55, 1.15]} />
         <meshStandardMaterial
           color="#7ec8d4"
           transparent
@@ -98,13 +114,13 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
         const y = yForPrice(PRICE_MIN + t * (PRICE_MAX - PRICE_MIN));
         return (
           <mesh key={t} position={[0, y, 0]} raycast={skipRaycast}>
-            <boxGeometry args={[1.28, 0.008, 0.82]} />
+            <boxGeometry args={[1.12, 0.008, 0.82]} />
             <meshStandardMaterial color="#1c3d46" transparent opacity={0.55} />
           </mesh>
         );
       })}
-      <mesh position={[0, (yEntry + yStop) / 2, 0.08]}>
-        <boxGeometry args={[0.62, riskH, 0.4]} />
+      <mesh position={[0, (yEntry + yStop) / 2, 0.08]} raycast={skipRaycast}>
+        <boxGeometry args={[0.58, riskH, 0.38]} />
         <meshStandardMaterial
           color="#ff5c6a"
           emissive="#ff5c6a"
@@ -116,8 +132,8 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
           toneMapped={false}
         />
       </mesh>
-      <mesh position={[0.08, (yEntry + yTarget) / 2, -0.06]}>
-        <boxGeometry args={[rewardW, rewardH, rewardD]} />
+      <mesh position={[0, (yEntry + yTarget) / 2, -0.04]} raycast={skipRaycast}>
+        <boxGeometry args={[0.72, rewardH, rewardD]} />
         <meshStandardMaterial
           color="#3ee0a0"
           emissive="#3ee0a0"
@@ -129,8 +145,8 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
           toneMapped={false}
         />
       </mesh>
-      <mesh position={[0, yEntry, 0]}>
-        <boxGeometry args={[1.22, 0.025, 0.78]} />
+      <mesh position={[0, yEntry, 0]} raycast={skipRaycast}>
+        <boxGeometry args={[1.12, 0.025, 0.78]} />
         <meshStandardMaterial
           color="#ff8a3d"
           emissive="#ff8a3d"
@@ -142,19 +158,19 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
         y={yTarget}
         color="#3ee0a0"
         label={`TP ${draft.target.toFixed(1)}`}
-        onY={(y) => onPrice("target", roundPrice(priceForY(y)))}
+        onY={(worldY) => onPrice("target", roundPrice(priceForY(worldY)))}
       />
       <LevelHandle
         y={yEntry}
         color="#ff8a3d"
         label={`EN ${draft.entry.toFixed(1)}`}
-        onY={(y) => onPrice("entry", roundPrice(priceForY(y)))}
+        onY={(worldY) => onPrice("entry", roundPrice(priceForY(worldY)))}
       />
       <LevelHandle
         y={yStop}
         color="#ff5c6a"
         label={`SL ${draft.stop.toFixed(1)}`}
-        onY={(y) => onPrice("stop", roundPrice(priceForY(y)))}
+        onY={(worldY) => onPrice("stop", roundPrice(priceForY(worldY)))}
       />
       <Text
         position={[-0.02, (yEntry + yStop) / 2, 0.32]}
@@ -164,17 +180,19 @@ export function RiskRewardVolume({ draft, math, onPrice }: Props) {
         anchorY="middle"
         outlineWidth={0.005}
         outlineColor="#031016"
+        raycast={skipRaycast}
       >
         risk
       </Text>
       <Text
-        position={[0.08, (yEntry + yTarget) / 2, rewardD / 2 + 0.12]}
+        position={[0, (yEntry + yTarget) / 2, rewardD / 2 + 0.1]}
         fontSize={0.08}
         color="#b8ffe0"
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.005}
         outlineColor="#031016"
+        raycast={skipRaycast}
       >
         reward
       </Text>

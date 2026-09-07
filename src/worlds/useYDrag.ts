@@ -6,9 +6,13 @@ type OrbitLock = { enabled: boolean };
 
 export function useYDrag(onY: (worldY: number) => void) {
   const dragging = useRef(false);
+  const primed = useRef(false);
+  const originY = useRef(0);
+  const grabY = useRef(0);
   const plane = useRef(new Plane());
   const hit = useRef(new Vector3());
   const normal = useRef(new Vector3());
+  const anchor = useRef(new Vector3(0, 1, 0));
   const onYRef = useRef(onY);
   onYRef.current = onY;
 
@@ -26,15 +30,21 @@ export function useYDrag(onY: (worldY: number) => void) {
     normal.current.set(camera.position.x, 0, camera.position.z);
     if (normal.current.lengthSq() < 0.0001) normal.current.set(0, 0, 1);
     normal.current.normalize();
-    plane.current.setFromNormalAndCoplanarPoint(normal.current, hit.current.set(0, 1, 0));
+    plane.current.setFromNormalAndCoplanarPoint(normal.current, anchor.current);
     raycaster.setFromCamera(pointer, camera);
-    if (raycaster.ray.intersectPlane(plane.current, hit.current)) {
-      onYRef.current(hit.current.y);
+    if (!raycaster.ray.intersectPlane(plane.current, hit.current)) return;
+    if (!primed.current) {
+      grabY.current = hit.current.y;
+      primed.current = true;
+      return;
     }
+    onYRef.current(originY.current + (hit.current.y - grabY.current));
   });
 
-  const begin = useCallback(() => {
+  const begin = useCallback((handleY: number) => {
     dragging.current = true;
+    primed.current = false;
+    originY.current = handleY;
     setOrbit(false);
     document.body.style.cursor = "ns-resize";
   }, []);
@@ -42,6 +52,7 @@ export function useYDrag(onY: (worldY: number) => void) {
   const end = useCallback(() => {
     if (!dragging.current) return;
     dragging.current = false;
+    primed.current = false;
     setOrbit(true);
     document.body.style.cursor = "auto";
   }, []);

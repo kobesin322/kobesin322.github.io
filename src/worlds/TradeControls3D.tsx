@@ -118,7 +118,7 @@ function RailKnob({
         }}
         onPointerDown={(event) => {
           event.stopPropagation();
-          begin();
+          begin(y);
         }}
       >
         <sphereGeometry args={[hovered ? 0.13 : 0.11, 20, 16]} />
@@ -278,13 +278,13 @@ export function TradeControls3D({ draft, math, onDraft }: Props) {
         label="REWARD $"
         value={`$${math.rewardDollars.toFixed(0)}`}
         color="#3ee0a0"
-        position={[2.15, 1.22, 1.55]}
+        position={[3.15, 1.22, 1.45]}
       />
       <StatCard
         label="SIZE"
         value={math.qty.toFixed(0)}
         color="#ff8a3d"
-        position={[2.15, 0.57, 1.55]}
+        position={[3.15, 0.57, 1.45]}
       />
     </>
   );
