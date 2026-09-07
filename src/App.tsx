@@ -1,14 +1,18 @@
 import { Canvas } from "@react-three/fiber";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { parseSelectionHash } from "./data/constellation";
 import { INTRO_POSITION } from "./lib/camera";
+import { usePageVisible } from "./hooks/usePageVisible";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
 import { Hud } from "./overlay/Hud";
 import { StarPanel } from "./overlay/StarPanel";
 import { Experience } from "./scene/Experience";
 import type { Selection } from "./types";
-import { TradingScene } from "./worlds/TradingScene";
+
+const TradingScene = lazy(() =>
+  import("./worlds/TradingScene").then((mod) => ({ default: mod.TradingScene })),
+);
 
 function writeHash(selection: Selection) {
   if (selection.kind === "none") {
@@ -19,8 +23,13 @@ function writeHash(selection: Selection) {
   window.history.replaceState(null, "", next);
 }
 
+function warmupTrading() {
+  void import("./worlds/TradingScene");
+}
+
 export default function App() {
   const reduceMotion = usePrefersReducedMotion();
+  const pageVisible = usePageVisible();
   const [selection, setSelection] = useState<Selection>(() => {
     if (typeof window === "undefined") return { kind: "none" };
     return parseSelectionHash(window.location.hash) ?? { kind: "none" };
@@ -68,16 +77,28 @@ export default function App() {
   }, [coverExit, select, selection]);
 
   useEffect(() => {
+    if (selection.kind === "star" && selection.id === "trading") warmupTrading();
+  }, [selection]);
+
+  useEffect(() => {
     if (selection.kind !== "world") {
       setWorldReady(false);
       return;
     }
-    if (reduceMotion) {
-      setWorldReady(true);
-      return;
-    }
-    const timer = window.setTimeout(() => setWorldReady(true), 1100);
-    return () => window.clearTimeout(timer);
+    let cancelled = false;
+    let timeout = 0;
+    const started = performance.now();
+    void import("./worlds/TradingScene").then(() => {
+      if (cancelled) return;
+      const remain = reduceMotion ? 0 : Math.max(0, 1100 - (performance.now() - started));
+      timeout = window.setTimeout(() => {
+        if (!cancelled) setWorldReady(true);
+      }, remain);
+    });
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+    };
   }, [selection, reduceMotion]);
 
   useEffect(() => {
@@ -113,14 +134,17 @@ export default function App() {
       <div className="noise" aria-hidden="true" />
       <div className="canvas-wrap">
         <Canvas
-          camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 200 }}
-          dpr={[1, 1.25]}
+          frameloop={pageVisible ? "always" : "never"}
+          camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 80 }}
+          dpr={reduceMotion ? [1, 1] : [1, 1.15]}
           gl={{
-            antialias: true,
+            antialias: false,
             alpha: false,
             toneMapping: ACESFilmicToneMapping,
             outputColorSpace: SRGBColorSpace,
             powerPreference: "high-performance",
+            stencil: false,
+            depth: true,
           }}
           onCreated={({ gl }) => {
             gl.setClearColor("#05070c");
@@ -128,7 +152,9 @@ export default function App() {
           }}
         >
           {insideTrading ? (
-            <TradingScene reduceMotion={reduceMotion} />
+            <Suspense fallback={null}>
+              <TradingScene reduceMotion={reduceMotion} />
+            </Suspense>
           ) : (
             <Experience
               selection={selection}

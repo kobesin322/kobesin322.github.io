@@ -1,9 +1,8 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { CameraControls, ContactShadows, Grid, Sparkles, Text } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { CameraControls, Text } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
 import type CameraControlsImpl from "camera-controls";
-import type { PointLight } from "three";
-import { Effects } from "../scene/Effects";
+import { skipRaycast } from "../lib/skipRaycast";
 import { CandleField } from "./CandleField";
 import { RiskRewardVolume } from "./RiskRewardVolume";
 import { TradeControls3D } from "./TradeControls3D";
@@ -17,6 +16,23 @@ const initial: TradeDraft = {
   target: 191.4,
 };
 
+function FitCamera() {
+  const camera = useThree((state) => state.camera);
+
+  useLayoutEffect(() => {
+    camera.near = 0.12;
+    camera.far = 26;
+    camera.updateProjectionMatrix();
+    return () => {
+      camera.near = 0.1;
+      camera.far = 80;
+      camera.updateProjectionMatrix();
+    };
+  }, [camera]);
+
+  return null;
+}
+
 function DeskCamera({ reduceMotion }: { reduceMotion: boolean }) {
   const controls = useRef<CameraControlsImpl>(null);
   const idle = useRef(true);
@@ -29,7 +45,7 @@ function DeskCamera({ reduceMotion }: { reduceMotion: boolean }) {
       idle.current = false;
     };
     rig.addEventListener("controlstart", stopIdle);
-    const timer = window.setTimeout(stopIdle, 2200);
+    const timer = window.setTimeout(stopIdle, 1800);
     return () => {
       rig.removeEventListener("controlstart", stopIdle);
       window.clearTimeout(timer);
@@ -56,17 +72,6 @@ function DeskCamera({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function CausticLight() {
-  const light = useRef<PointLight>(null);
-  useFrame(({ clock }) => {
-    if (!light.current) return;
-    const t = clock.elapsedTime;
-    light.current.position.x = Math.sin(t * 0.28) * 2.4;
-    light.current.position.z = Math.cos(t * 0.22) * 1.6 - 0.4;
-  });
-  return <pointLight ref={light} position={[0, 3.2, 1]} intensity={1.15} distance={14} color="#7ec8d4" />;
-}
-
 type Props = {
   reduceMotion: boolean;
 };
@@ -86,33 +91,18 @@ export function TradingScene({ reduceMotion }: Props) {
   return (
     <>
       <color attach="background" args={["#041018"]} />
-      <fog attach="fog" args={["#041018", 8, 26]} />
-      <ambientLight intensity={0.16} />
-      <hemisphereLight args={["#4aa8b8", "#041018", 0.38]} />
-      <directionalLight position={[5, 7, 4]} intensity={0.55} color="#c5e8ee" />
-      <pointLight position={[0, 2.4, 0.4]} intensity={1.2} distance={8} color="#ff8a3d" />
-      <pointLight position={[-2.2, 1.6, 1.2]} intensity={0.7} distance={7} color="#3ee0a0" />
-      <CausticLight />
+      <fog attach="fog" args={["#041018", 7, 20]} />
+      <ambientLight intensity={0.18} />
+      <hemisphereLight args={["#4aa8b8", "#041018", 0.32]} />
+      <directionalLight position={[5, 7, 4]} intensity={0.5} color="#c5e8ee" />
+      <pointLight position={[0, 2.4, 0.4]} intensity={1.05} distance={7} color="#ff8a3d" />
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <circleGeometry args={[7.2, 64]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} raycast={skipRaycast}>
+        <circleGeometry args={[6.4, 32]} />
         <meshStandardMaterial color="#062028" roughness={0.92} metalness={0.08} />
       </mesh>
-      <Grid
-        position={[0, 0.012, 0]}
-        args={[16, 16]}
-        cellSize={0.45}
-        cellThickness={0.6}
-        cellColor="#0a3a44"
-        sectionSize={2.25}
-        sectionThickness={1.1}
-        sectionColor="#174a55"
-        fadeDistance={16}
-        fadeStrength={1.2}
-        infiniteGrid
-      />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <ringGeometry args={[5.15, 5.42, 72]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} raycast={skipRaycast}>
+        <ringGeometry args={[5.15, 5.38, 48]} />
         <meshStandardMaterial
           color="#ff8a3d"
           emissive="#ff8a3d"
@@ -120,8 +110,7 @@ export function TradingScene({ reduceMotion }: Props) {
           toneMapped={false}
         />
       </mesh>
-
-      <mesh position={[0, 0.1, 0.05]}>
+      <mesh position={[0, 0.1, 0.05]} raycast={skipRaycast}>
         <boxGeometry args={[4.4, 0.16, 2.6]} />
         <meshStandardMaterial color="#0a1c22" metalness={0.42} roughness={0.32} />
       </mesh>
@@ -135,6 +124,7 @@ export function TradingScene({ reduceMotion }: Props) {
         letterSpacing={0.06}
         outlineWidth={0.008}
         outlineColor="#031016"
+        raycast={skipRaycast}
       >
         OPEN A TRADE
       </Text>
@@ -146,6 +136,7 @@ export function TradingScene({ reduceMotion }: Props) {
         anchorY="middle"
         outlineWidth={0.005}
         outlineColor="#031016"
+        raycast={skipRaycast}
       >
         DRAG THE LEVELS · ORBIT THE PIT
       </Text>
@@ -153,10 +144,8 @@ export function TradingScene({ reduceMotion }: Props) {
       <RiskRewardVolume draft={draft} math={math} onPrice={onPrice} />
       <TradeControls3D draft={draft} math={math} onDraft={onDraft} />
       <CandleField reduceMotion={reduceMotion} />
-      <Sparkles count={48} scale={[14, 6, 12]} size={2.2} speed={0.22} color="#7ec8d4" opacity={0.42} />
-      <ContactShadows position={[0, 0.02, 0]} opacity={0.45} scale={14} blur={2.4} far={5} />
+      <FitCamera />
       <DeskCamera reduceMotion={reduceMotion} />
-      <Effects />
     </>
   );
 }

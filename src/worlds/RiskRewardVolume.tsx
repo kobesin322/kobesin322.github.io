@@ -2,6 +2,7 @@ import { Billboard, Text } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useState } from "react";
 import type { TradeDraft, TradeMath } from "./tradeMath";
+import { skipRaycast } from "../lib/skipRaycast";
 import { PRICE_MAX, PRICE_MIN, priceForY, roundPrice, yForPrice } from "./chartScale";
 import { lockOrbit, useYDrag } from "./useYDrag";
 
@@ -10,8 +11,6 @@ type Props = {
   math: TradeMath;
   onPrice: (key: "entry" | "stop" | "target", price: number) => void;
 };
-
-function skipRaycast() {}
 
 function LevelHandle({
   y,
@@ -31,7 +30,7 @@ function LevelHandle({
   return (
     <group position={[0, y, 0]}>
       <mesh rotation={[Math.PI / 2, 0, 0]} raycast={skipRaycast}>
-        <torusGeometry args={[0.5, 0.028, 10, 40]} />
+        <torusGeometry args={[0.5, 0.028, 8, 24]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
@@ -64,7 +63,7 @@ function LevelHandle({
             begin(y);
           }}
         >
-          <circleGeometry args={[hovered ? 0.2 : 0.175, 28]} />
+          <circleGeometry args={[hovered ? 0.2 : 0.175, 20]} />
           <meshStandardMaterial
             color={color}
             emissive={color}
@@ -74,7 +73,7 @@ function LevelHandle({
           />
         </mesh>
         <mesh raycast={skipRaycast}>
-          <ringGeometry args={[0.175, 0.22, 28]} />
+          <ringGeometry args={[0.175, 0.22, 20]} />
           <meshBasicMaterial color={color} transparent opacity={0.35} toneMapped={false} />
         </mesh>
         <Text

@@ -25,8 +25,10 @@ export function Star({ star, selection, onSelect }: Props) {
   const [hovered, setHovered] = useState(false);
   const isHub = star.id === "hub";
   const entering = selection.kind === "world" && selection.id === star.id;
-  const active = isFocused(star.id, selection) || hovered;
-  const showLabel = !entering && (isHub || hovered || active);
+  const focused = isFocused(star.id, selection);
+  const active = focused || hovered;
+  const showLabel = !entering && (isHub || hovered || focused);
+  const idleSpin = !isHub && !entering && !focused && selection.kind === "none";
   const down = useRef({ x: 0, y: 0 });
   const hitRadius = isHub ? 0.72 : 0.5;
 
@@ -36,11 +38,18 @@ export function Star({ star, selection, onSelect }: Props) {
   }, [isHub, star.position]);
 
   useFrame((_, delta) => {
-    if (craft.current && !isHub && !entering) {
+    if (craft.current && idleSpin) {
       craft.current.rotateZ(delta * 0.1);
     }
     if (root.current) {
       const goal = entering ? 7.5 : 1;
+      if (Math.abs(goal - scale.current) < 0.001) {
+        if (scale.current !== goal) {
+          scale.current = goal;
+          root.current.scale.setScalar(goal);
+        }
+        return;
+      }
       scale.current += (goal - scale.current) * Math.min(1, delta * 2.4);
       root.current.scale.setScalar(scale.current);
     }
@@ -49,7 +58,12 @@ export function Star({ star, selection, onSelect }: Props) {
   return (
     <group ref={root} position={star.position}>
       {isHub ? (
-        <HubCore color={star.color} luminosity={star.luminosity} active={active} />
+        <HubCore
+          color={star.color}
+          luminosity={star.luminosity}
+          active={active}
+          emitLight={selection.kind === "none" || active}
+        />
       ) : (
         <group ref={craft}>
           <SatelliteCraft color={star.color} luminosity={star.luminosity} active={active} />
@@ -80,7 +94,7 @@ export function Star({ star, selection, onSelect }: Props) {
           onSelect({ kind: "star", id: star.id });
         }}
       >
-        <sphereGeometry args={[hitRadius, 16, 16]} />
+        <sphereGeometry args={[hitRadius, 12, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {showLabel && (

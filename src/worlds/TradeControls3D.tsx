@@ -1,11 +1,9 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Billboard, Text } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
-import type { Group } from "three";
+import { useThree } from "@react-three/fiber";
+import { skipRaycast } from "../lib/skipRaycast";
 import type { TradeDraft, TradeMath } from "./tradeMath";
 import { lockOrbit, useYDrag } from "./useYDrag";
-
-function skipRaycast() {}
 
 type KnobProps = {
   label: string;
@@ -184,48 +182,40 @@ function StatCard({
   color: string;
   position: [number, number, number];
 }) {
-  const root = useRef<Group>(null);
-  useFrame(({ clock }) => {
-    if (!root.current) return;
-    root.current.position.y = Math.sin(clock.elapsedTime * 0.7 + position[0]) * 0.035;
-  });
-
   return (
     <Billboard follow position={position}>
-      <group ref={root}>
-        <mesh raycast={skipRaycast}>
-          <boxGeometry args={[1.15, 0.52, 0.07]} />
-          <meshStandardMaterial
-            color="#071820"
-            emissive={color}
-            emissiveIntensity={0.08}
-            metalness={0.25}
-            roughness={0.4}
-            transparent
-            opacity={0.92}
-          />
-        </mesh>
-        <Text
-          position={[0, 0.12, 0.045]}
-          fontSize={0.075}
-          color="#8aa0aa"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {label}
-        </Text>
-        <Text
-          position={[0, -0.08, 0.045]}
-          fontSize={0.16}
-          color={color}
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.006}
-          outlineColor="#031016"
-        >
-          {value}
-        </Text>
-      </group>
+      <mesh raycast={skipRaycast}>
+        <boxGeometry args={[1.15, 0.52, 0.07]} />
+        <meshStandardMaterial
+          color="#071820"
+          emissive={color}
+          emissiveIntensity={0.08}
+          metalness={0.25}
+          roughness={0.4}
+          transparent
+          opacity={0.92}
+        />
+      </mesh>
+      <Text
+        position={[0, 0.12, 0.045]}
+        fontSize={0.075}
+        color="#8aa0aa"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {label}
+      </Text>
+      <Text
+        position={[0, -0.08, 0.045]}
+        fontSize={0.16}
+        color={color}
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.006}
+        outlineColor="#031016"
+      >
+        {value}
+      </Text>
     </Billboard>
   );
 }

@@ -1,4 +1,5 @@
 import type { Selection } from "../types";
+import { lodFor } from "../lib/sceneLod";
 import { CameraRig } from "./CameraRig";
 import { Constellation } from "./Constellation";
 import { Effects } from "./Effects";
@@ -19,9 +20,11 @@ export function Experience({
   snapCamera = false,
   onSnapApplied,
 }: Props) {
+  const lod = lodFor(selection);
+
   return (
     <>
-      <SpaceBackdrop />
+      <SpaceBackdrop lod={lod} />
       <CameraRig
         selection={selection}
         reduceMotion={reduceMotion}
@@ -29,7 +32,7 @@ export function Experience({
         onSnapApplied={onSnapApplied}
       />
       <Constellation selection={selection} onSelect={onSelect} />
-      <Effects />
+      {lod !== "dive" && <Effects quality={lod === "overview" ? "full" : "lean"} />}
     </>
   );
 }

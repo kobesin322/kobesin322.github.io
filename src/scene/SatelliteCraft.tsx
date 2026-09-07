@@ -1,4 +1,5 @@
 import { glowIntensity } from "../lib/color";
+import { skipRaycast } from "../lib/skipRaycast";
 import { GlowSprite } from "./GlowSprite";
 
 type Props = {
@@ -12,15 +13,15 @@ export function SatelliteCraft({ color, luminosity, active }: Props) {
 
   return (
     <group>
-      <mesh>
+      <mesh raycast={skipRaycast}>
         <boxGeometry args={[0.2, 0.09, 0.26]} />
         <meshStandardMaterial color="#12141a" metalness={0.78} roughness={0.22} />
       </mesh>
-      <mesh position={[0, 0.065, 0.02]}>
+      <mesh position={[0, 0.065, 0.02]} raycast={skipRaycast}>
         <boxGeometry args={[0.1, 0.016, 0.14]} />
         <meshStandardMaterial color="#1c2230" metalness={0.5} roughness={0.35} />
       </mesh>
-      <mesh position={[-0.28, 0, 0]} rotation={[0, 0, 0.08]}>
+      <mesh position={[-0.28, 0, 0]} rotation={[0, 0, 0.08]} raycast={skipRaycast}>
         <boxGeometry args={[0.32, 0.01, 0.18]} />
         <meshStandardMaterial
           color={color}
@@ -31,7 +32,7 @@ export function SatelliteCraft({ color, luminosity, active }: Props) {
           toneMapped={false}
         />
       </mesh>
-      <mesh position={[0.28, 0, 0]} rotation={[0, 0, -0.08]}>
+      <mesh position={[0.28, 0, 0]} rotation={[0, 0, -0.08]} raycast={skipRaycast}>
         <boxGeometry args={[0.32, 0.01, 0.18]} />
         <meshStandardMaterial
           color={color}
@@ -42,7 +43,7 @@ export function SatelliteCraft({ color, luminosity, active }: Props) {
           toneMapped={false}
         />
       </mesh>
-      <mesh position={[0, 0.11, -0.07]} rotation={[0.4, 0, 0]}>
+      <mesh position={[0, 0.11, -0.07]} rotation={[0.4, 0, 0]} raycast={skipRaycast}>
         <cylinderGeometry args={[0.025, 0.025, 0.14, 8]} />
         <meshStandardMaterial color="#cfd6e4" metalness={0.85} roughness={0.18} />
       </mesh>

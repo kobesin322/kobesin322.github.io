@@ -8,6 +8,7 @@ import {
   type Sprite,
 } from "three";
 import { getStar } from "../data/constellation";
+import { skipRaycast } from "../lib/skipRaycast";
 import { beamColor } from "../lib/color";
 import type { EdgeLink, Selection } from "../types";
 import { getGlowTexture } from "./textures";
@@ -56,8 +57,8 @@ export function Edge({ edge, selection, onSelect }: Props) {
     const path = new QuadraticBezierCurve3(start, mid, end);
     return {
       curve: path,
-      tube: new TubeGeometry(path, 32, 0.022, 6, false),
-      pick: new TubeGeometry(path, 12, 0.13, 5, false),
+      tube: new TubeGeometry(path, 16, 0.022, 5, false),
+      pick: new TubeGeometry(path, 8, 0.13, 5, false),
     };
   }, [from.position, to.position]);
 
@@ -69,6 +70,8 @@ export function Edge({ edge, selection, onSelect }: Props) {
     [tube, pick],
   );
 
+  const sparkOn = active || selection.kind === "none";
+
   useFrame(({ clock }) => {
     if (!spark.current) return;
     const t = (clock.elapsedTime * (active ? 0.18 : 0.08) + phase) % 1;
@@ -77,7 +80,7 @@ export function Edge({ edge, selection, onSelect }: Props) {
 
   return (
     <group>
-      <mesh geometry={tube}>
+      <mesh geometry={tube} raycast={skipRaycast}>
         <meshBasicMaterial
           color={tint}
           transparent
@@ -111,17 +114,19 @@ export function Edge({ edge, selection, onSelect }: Props) {
       >
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <sprite ref={spark} scale={active ? [0.42, 0.42, 1] : [0.24, 0.24, 1]} renderOrder={3}>
-        <spriteMaterial
-          map={glowMap}
-          color={tint}
-          transparent
-          opacity={0.85}
-          blending={AdditiveBlending}
-          depthWrite={false}
-          toneMapped={false}
-        />
-      </sprite>
+      {sparkOn && (
+        <sprite ref={spark} scale={active ? [0.42, 0.42, 1] : [0.24, 0.24, 1]} renderOrder={3} raycast={skipRaycast}>
+          <spriteMaterial
+            map={glowMap}
+            color={tint}
+            transparent
+            opacity={0.85}
+            blending={AdditiveBlending}
+            depthWrite={false}
+            toneMapped={false}
+          />
+        </sprite>
+      )}
     </group>
   );
 }
