@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { parseSelectionHash } from "./data/constellation";
 import { INTRO_POSITION } from "./lib/camera";
@@ -27,23 +27,41 @@ export default function App() {
     return parseSelectionHash(window.location.hash) ?? { kind: "none" };
   });
   const [worldReady, setWorldReady] = useState(false);
+  const [snapCamera, setSnapCamera] = useState(false);
+  const [exitVeil, setExitVeil] = useState(false);
+  const veilTimer = useRef(0);
 
   const select = useCallback((next: Selection) => {
     setSelection(next);
     writeHash(next);
   }, []);
 
+  const onSnapApplied = useCallback(() => {
+    setSnapCamera(false);
+  }, []);
+
+  const coverExit = useCallback(() => {
+    setSnapCamera(true);
+    setExitVeil(true);
+    window.clearTimeout(veilTimer.current);
+    veilTimer.current = window.setTimeout(() => setExitVeil(false), 280);
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(veilTimer.current), []);
+
   const home = useCallback(() => {
+    if (selection.kind === "world") coverExit();
     select({ kind: "none" });
-  }, [select]);
+  }, [coverExit, select, selection.kind]);
 
   const back = useCallback(() => {
     if (selection.kind === "world") {
+      coverExit();
       select({ kind: "star", id: selection.id });
       return;
     }
     select({ kind: "none" });
-  }, [select, selection]);
+  }, [coverExit, select, selection]);
 
   useEffect(() => {
     if (selection.kind !== "world") {
@@ -74,14 +92,13 @@ export default function App() {
   }, [back, select]);
 
   const insideTrading = worldReady && selection.kind === "world" && selection.id === "trading";
-  const diving = selection.kind === "world" && !worldReady;
+  const diving = (selection.kind === "world" && !worldReady) || exitVeil;
 
   return (
     <>
       <div className="noise" aria-hidden="true" />
       <div className="canvas-wrap">
         <Canvas
-          key={insideTrading ? "world-trading" : "constellation"}
           camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 200 }}
           dpr={[1, 1.25]}
           gl={{
@@ -92,14 +109,20 @@ export default function App() {
             powerPreference: "high-performance",
           }}
           onCreated={({ gl }) => {
-            gl.setClearColor(insideTrading ? "#041018" : "#05070c");
+            gl.setClearColor("#05070c");
             gl.toneMappingExposure = 1.0;
           }}
         >
           {insideTrading ? (
             <TradingScene />
           ) : (
-            <Experience selection={selection} onSelect={select} reduceMotion={reduceMotion} />
+            <Experience
+              selection={selection}
+              onSelect={select}
+              reduceMotion={reduceMotion}
+              snapCamera={snapCamera}
+              onSnapApplied={onSnapApplied}
+            />
           )}
         </Canvas>
       </div>

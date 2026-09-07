@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { CameraControls } from "@react-three/drei";
 import type CameraControlsImpl from "camera-controls";
 import { INTRO_POSITION, INTRO_TARGET, lookAtForSelection } from "../lib/camera";
@@ -7,23 +7,38 @@ import type { Selection } from "../types";
 type Props = {
   selection: Selection;
   reduceMotion: boolean;
+  snap?: boolean;
+  onSnapApplied?: () => void;
 };
 
-export function CameraRig({ selection, reduceMotion }: Props) {
+function selectionKey(selection: Selection): string {
+  if (selection.kind === "none") return "none";
+  return `${selection.kind}:${selection.id}`;
+}
+
+export function CameraRig({
+  selection,
+  reduceMotion,
+  snap = false,
+  onSnapApplied,
+}: Props) {
   const controls = useRef<CameraControlsImpl>(null);
   const didIntro = useRef(false);
+  const lastLook = useRef("");
 
-  useEffect(() => {
-    const rig = controls.current;
-    if (!rig) return;
+  useLayoutEffect(() => {
     let cancelled = false;
+    let introFrame = 0;
+    let retryFrame = 0;
 
     const fly = (
       position: [number, number, number],
       target: [number, number, number],
       animate: boolean,
-    ) =>
-      rig.setLookAt(
+    ) => {
+      const rig = controls.current;
+      if (!rig) return false;
+      void rig.setLookAt(
         position[0],
         position[1],
         position[2],
@@ -32,29 +47,63 @@ export function CameraRig({ selection, reduceMotion }: Props) {
         target[2],
         animate,
       );
+      return true;
+    };
 
-    if (selection.kind !== "none") {
-      const { position, target } = lookAtForSelection(selection);
-      void fly(position, target, !reduceMotion);
-      return;
-    }
+    const apply = () => {
+      if (cancelled) return true;
+      const key = selectionKey(selection);
+      if (lastLook.current === key && !snap) return true;
 
-    const overview = lookAtForSelection({ kind: "none" });
-    if (!didIntro.current && !reduceMotion) {
+      const animate = !reduceMotion && !snap;
+
+      if (selection.kind !== "none") {
+        const { position, target } = lookAtForSelection(selection);
+        if (!fly(position, target, animate)) return false;
+        didIntro.current = true;
+        lastLook.current = key;
+        if (snap) {
+          queueMicrotask(() => {
+            if (!cancelled) onSnapApplied?.();
+          });
+        }
+        return true;
+      }
+
+      const overview = lookAtForSelection({ kind: "none" });
+      if (!didIntro.current && !reduceMotion && !snap) {
+        didIntro.current = true;
+        if (!fly(INTRO_POSITION, INTRO_TARGET, false)) return false;
+        introFrame = window.requestAnimationFrame(() => {
+          if (cancelled) return;
+          if (fly(overview.position, overview.target, true)) lastLook.current = key;
+        });
+        return true;
+      }
+
+      if (!fly(overview.position, overview.target, animate)) return false;
       didIntro.current = true;
-      void fly(INTRO_POSITION, INTRO_TARGET, false);
-      const id = window.requestAnimationFrame(() => {
-        if (!cancelled) void fly(overview.position, overview.target, true);
+      lastLook.current = key;
+      if (snap) {
+        queueMicrotask(() => {
+          if (!cancelled) onSnapApplied?.();
+        });
+      }
+      return true;
+    };
+
+    if (!apply()) {
+      retryFrame = window.requestAnimationFrame(() => {
+        apply();
       });
-      return () => {
-        cancelled = true;
-        window.cancelAnimationFrame(id);
-      };
     }
 
-    didIntro.current = true;
-    void fly(overview.position, overview.target, !reduceMotion);
-  }, [selection, reduceMotion]);
+    return () => {
+      cancelled = true;
+      if (introFrame) window.cancelAnimationFrame(introFrame);
+      if (retryFrame) window.cancelAnimationFrame(retryFrame);
+    };
+  }, [selection, reduceMotion, snap, onSnapApplied]);
 
   return (
     <CameraControls

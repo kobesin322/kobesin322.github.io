@@ -1,8 +1,16 @@
+import { useLayoutEffect } from "react";
 import { Sparkles } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { CandleField } from "./CandleField";
 
 function DriftCamera() {
+  const { camera } = useThree();
+
+  useLayoutEffect(() => {
+    camera.position.set(-0.4, 1.15, 6.4);
+    camera.lookAt(1.4, 0.4, -2);
+  }, [camera]);
+
   useFrame(({ camera, clock }) => {
     const t = clock.elapsedTime;
     camera.position.x = -0.4 + Math.sin(t * 0.07) * 0.35;

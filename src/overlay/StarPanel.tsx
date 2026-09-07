@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { getEdge, getStar } from "../data/constellation";
 import type { Selection } from "../types";
 
@@ -9,13 +10,20 @@ type Props = {
 
 export function StarPanel({ selection, onClose, onEnterWorld }: Props) {
   const open = selection.kind !== "none";
+  const [held, setHeld] = useState(selection);
+
+  useEffect(() => {
+    if (selection.kind !== "none") setHeld(selection);
+  }, [selection]);
+
+  const view = open ? selection : held;
 
   return (
     <aside className={`panel${open ? " is-open" : ""}`} aria-hidden={!open}>
-      {selection.kind === "star" && (
-        <StarBody id={selection.id} onClose={onClose} onEnterWorld={onEnterWorld} />
+      {view.kind === "star" && (
+        <StarBody id={view.id} onClose={onClose} onEnterWorld={onEnterWorld} />
       )}
-      {selection.kind === "edge" && <EdgeBody id={selection.id} onClose={onClose} />}
+      {view.kind === "edge" && <EdgeBody id={view.id} onClose={onClose} />}
     </aside>
   );
 }
