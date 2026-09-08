@@ -13,7 +13,7 @@ export function GalleryPage({ reduceMotion }: Props) {
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
-  const pointer = useRef<{ id: number; start: number } | null>(null);
+  const pointer = useRef<{ id: number; start: number; captured: boolean } | null>(null);
   const live = useRef(index);
   live.current = index;
 
@@ -57,23 +57,39 @@ export function GalleryPage({ reduceMotion }: Props) {
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
-    pointer.current = { id: event.pointerId, start: event.clientX };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setDragging(true);
+    if ((event.target as HTMLElement).closest("button")) return;
+    pointer.current = { id: event.pointerId, start: event.clientX, captured: false };
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const hold = pointer.current;
     if (!hold || hold.id !== event.pointerId) return;
-    setDrag(event.clientX - hold.start);
+    const dx = event.clientX - hold.start;
+    if (!hold.captured && Math.abs(dx) > 10) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+      hold.captured = true;
+      setDragging(true);
+    }
+    if (hold.captured) setDrag(dx);
   };
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
     const hold = pointer.current;
     if (!hold || hold.id !== event.pointerId) return;
     pointer.current = null;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    snapFromDrag(event.clientX - hold.start);
+    const dx = event.clientX - hold.start;
+    if (hold.captured) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+      snapFromDrag(dx);
+      return;
+    }
+    setDrag(0);
+    setDragging(false);
+    const card = (event.target as HTMLElement | null)?.closest?.("[data-print]");
+    const id = card?.getAttribute("data-print");
+    if (!id) return;
+    const i = GALLERY_PRINTS.findIndex((item) => item.id === id);
+    if (i >= 0 && i !== live.current) go(i);
   };
 
   const wheelLock = useRef(0);
@@ -115,6 +131,8 @@ export function GalleryPage({ reduceMotion }: Props) {
               <article
                 key={item.id}
                 className={`gallery-card${i === index ? " is-current" : ""}`}
+                data-print={item.id}
+                aria-hidden={i !== index}
                 style={{
                   ["--p0" as string]: item.palette[0],
                   ["--p1" as string]: item.palette[1],
@@ -124,12 +142,6 @@ export function GalleryPage({ reduceMotion }: Props) {
                   opacity: hidden ? 0 : abs > 1.85 ? 0.35 : 1,
                   pointerEvents: hidden ? "none" : "auto",
                 }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (Math.abs(drag) > 12) return;
-                  if (i !== index) go(i);
-                }}
-                aria-hidden={i !== index}
               >
                 <div className="gallery-matte">
                   <div className={`print-art print--${item.id}`}>

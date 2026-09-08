@@ -10,6 +10,7 @@ import {
   HangingPrint,
   PRINTS,
 } from "./PhotographyStudio";
+import { lockOrbit } from "./useYDrag";
 
 function FitCamera() {
   const camera = useThree((state) => state.camera);
@@ -103,8 +104,19 @@ function StudioHeroCamera({
   iris: number;
   onOpenGallery: () => void;
 }) {
+  const { controls } = useThree();
   const [hovered, setHovered] = useState(false);
   const down = useRef({ x: 0, y: 0 });
+
+  const tryOpen = (event: { stopPropagation: () => void; clientX: number; clientY: number }) => {
+    event.stopPropagation();
+    const dx = event.clientX - down.current.x;
+    const dy = event.clientY - down.current.y;
+    if (dx * dx + dy * dy > 36) return;
+    lockOrbit(controls, true);
+    document.body.style.cursor = "auto";
+    onOpenGallery();
+  };
 
   return (
     <group position={[0, 1.05, 0]} rotation={[0, -0.55, 0]} scale={2.55}>
@@ -118,32 +130,35 @@ function StudioHeroCamera({
         iris={iris}
       />
       <mesh
-        position={[0, 0.02, 0.12]}
+        position={[0, 0.02, 0.1]}
         onPointerOver={(event) => {
           event.stopPropagation();
           setHovered(true);
+          lockOrbit(controls, false);
           document.body.style.cursor = "pointer";
         }}
         onPointerOut={() => {
           setHovered(false);
+          lockOrbit(controls, true);
           document.body.style.cursor = "auto";
         }}
         onPointerDown={(event) => {
           event.stopPropagation();
+          lockOrbit(controls, false);
           down.current = { x: event.clientX, y: event.clientY };
         }}
-        onClick={(event) => {
-          event.stopPropagation();
-          const dx = event.clientX - down.current.x;
-          const dy = event.clientY - down.current.y;
-          if (dx * dx + dy * dy > 36) return;
-          onOpenGallery();
-        }}
+        onPointerUp={tryOpen}
       >
-        <boxGeometry args={[0.78, 0.62, 0.78]} />
+        <boxGeometry args={[0.95, 0.72, 0.95]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <Html position={[0, -0.32, 0.22]} center style={{ pointerEvents: "auto" }} zIndexRange={[30, 10]}>
+      <Html
+        position={[0, -0.22, 0.28]}
+        center
+        occlude={false}
+        style={{ pointerEvents: "auto" }}
+        zIndexRange={[40, 10]}
+      >
         <button type="button" className={`iris-chip${hovered ? " is-hot" : ""}`} onClick={onOpenGallery}>
           Print gallery
         </button>
@@ -219,7 +234,7 @@ export function PhotographyScene({ reduceMotion, onOpenGallery }: Props) {
         CLICK THE CAMERA FOR PRINTS · DRAG THE IRIS · ORBIT
       </Text>
 
-      <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.15, 0, 1.65]} onChange={setFStop} />
+      <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.85, 0, 0.35]} onChange={setFStop} />
       {PRINTS.map((spec) => (
         <HangingPrint
           key={spec.id}
