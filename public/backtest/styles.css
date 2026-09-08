@@ -108,9 +108,9 @@ h1 {
   flex: 1;
   background: var(--plot);
   border-radius: 8px;
-  min-height: 428px;
-  aspect-ratio: 1.72 / 1;
-  max-height: 520px;
+  min-height: 470px;
+  aspect-ratio: 1.62 / 1;
+  max-height: 540px;
 }
 
 .chart-frame canvas {
