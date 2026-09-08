@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Billboard, Text } from "@react-three/drei";
+import { Billboard, Html, Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import type { Group } from "three";
 import { skipRaycast } from "../lib/skipRaycast";
@@ -21,8 +21,13 @@ export function yToFStop(y: number, y0: number, y1: number) {
   return Math.exp(min + t * (max - min));
 }
 
+export function nextFStop(fStop: number) {
+  const i = F_STOPS.findIndex((stop) => fStop < stop - 0.05);
+  return F_STOPS[i === -1 ? 0 : i];
+}
+
 export function formatFStop(fStop: number) {
-  if (fStop >= 9.5) return fStop.toFixed(0);
+  if (fStop >= 9.5) return String(Math.round(fStop));
   return fStop.toFixed(1);
 }
 
@@ -48,32 +53,15 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
   });
   const { controls } = useThree();
   const [hovered, setHovered] = useState(false);
+  const down = useRef({ x: 0, y: 0 });
+
+  const cycle = () => onChange(nextFStop(fStop));
 
   return (
     <group position={position}>
       <mesh position={[0, (y0 + y1) / 2, 0]} raycast={skipRaycast}>
         <boxGeometry args={[0.07, y1 - y0 + 0.28, 0.07]} />
         <meshStandardMaterial color="#2a1816" metalness={0.4} roughness={0.45} />
-      </mesh>
-      <mesh
-        position={[0, (y0 + y1) / 2, 0]}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          lockOrbit(controls, false);
-          document.body.style.cursor = "ns-resize";
-        }}
-        onPointerOut={() => {
-          if (!dragging.current) lockOrbit(controls, true);
-          document.body.style.cursor = "auto";
-        }}
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          lockOrbit(controls, false);
-          begin(event.point.y);
-        }}
-      >
-        <boxGeometry args={[0.32, y1 - y0 + 0.36, 0.32]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <Billboard position={[0, y, 0]} follow>
         <mesh
@@ -91,7 +79,15 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
           onPointerDown={(event) => {
             event.stopPropagation();
             lockOrbit(controls, false);
+            down.current = { x: event.clientX, y: event.clientY };
             begin(y);
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            const dx = event.clientX - down.current.x;
+            const dy = event.clientY - down.current.y;
+            if (dx * dx + dy * dy > 36) return;
+            cycle();
           }}
         >
           <circleGeometry args={[hovered ? 0.34 : 0.3, 24]} />
@@ -107,18 +103,11 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
           <ringGeometry args={[0.26, 0.34, 24]} />
           <meshBasicMaterial color="#c41e3a" transparent opacity={0.4} toneMapped={false} />
         </mesh>
-        <Text
-          position={[0.48, 0, 0]}
-          fontSize={0.13}
-          color="#f2e4d8"
-          anchorX="left"
-          anchorY="middle"
-          outlineWidth={0.006}
-          outlineColor="#12080a"
-          raycast={skipRaycast}
-        >
-          {`f/${formatFStop(fStop)}`}
-        </Text>
+        <Html position={[0.62, 0, 0]} center style={{ pointerEvents: "auto" }} zIndexRange={[30, 10]}>
+          <button type="button" className="iris-chip" onClick={cycle}>
+            {`f/${formatFStop(fStop)}`}
+          </button>
+        </Html>
       </Billboard>
     </group>
   );
@@ -212,7 +201,7 @@ export function HangingPrint({ spec, selected, exposure, onSelect }: PrintProps)
           onSelect(spec.id);
         }}
       >
-        <boxGeometry args={[1.28, 1.02, 0.06]} />
+        <boxGeometry args={[1.5, 1.18, 0.08]} />
         <meshStandardMaterial color={hovered || selected ? "#3a2c24" : "#241810"} roughness={0.7} />
       </mesh>
       <mesh position={[0, 0, 0.038]} raycast={skipRaycast}>

@@ -9,7 +9,7 @@ type Props = {
 
 function hint(selection: Selection): string {
   if (selection.kind === "world") {
-    if (selection.id === "photography") return "Orbit the studio · drag the iris · click a print";
+    if (selection.id === "photography") return "Orbit the studio · click or drag the iris · click a print";
     return "Orbit the pit · drag stop, entry, target";
   }
   if (selection.kind === "star") {

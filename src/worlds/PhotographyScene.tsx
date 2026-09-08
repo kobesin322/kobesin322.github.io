@@ -169,7 +169,7 @@ export function PhotographyScene({ reduceMotion }: Props) {
         outlineColor="#12080a"
         raycast={skipRaycast}
       >
-        DRAG THE IRIS · CLICK A PRINT · ORBIT THE STUDIO
+        DRAG OR CLICK THE IRIS · CLICK A PRINT · ORBIT THE STUDIO
       </Text>
 
       <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.15, 0, 1.65]} onChange={setFStop} />
