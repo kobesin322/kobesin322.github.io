@@ -3,6 +3,7 @@ import { Billboard, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 import type { Selection, StarNode } from "../types";
+import { CameraCraft } from "./CameraCraft";
 import { HubCore } from "./HubCore";
 import { SatelliteCraft } from "./SatelliteCraft";
 
@@ -18,27 +19,43 @@ function isFocused(starId: string, selection: Selection): boolean {
   );
 }
 
+const CAMERA_REST_Y = -0.55;
+
 export function Star({ star, selection, onSelect }: Props) {
   const craft = useRef<Group>(null);
   const root = useRef<Group>(null);
   const scale = useRef(1);
   const [hovered, setHovered] = useState(false);
   const isHub = star.id === "hub";
+  const isCamera = star.world === "photography";
   const entering = selection.kind === "world" && selection.id === star.id;
   const focused = isFocused(star.id, selection);
   const active = focused || hovered;
   const showLabel = !entering && (isHub || hovered || focused);
   const idleSpin = !isHub && !entering && !focused && selection.kind === "none";
   const down = useRef({ x: 0, y: 0 });
-  const hitRadius = isHub ? 0.72 : 0.5;
+  const hitRadius = isHub ? 0.72 : isCamera ? 0.92 : 0.5;
+  const labelY = isHub ? 1.0 : isCamera ? 0.92 : 0.58;
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
+    if (isCamera) {
+      craft.current.rotation.set(0, CAMERA_REST_Y, 0);
+      return;
+    }
     craft.current.lookAt(0, 0, 0);
-  }, [isHub, star.position]);
+  }, [isHub, isCamera, star.position]);
 
-  useFrame((_, delta) => {
-    if (craft.current && idleSpin) {
+  useFrame((state, delta) => {
+    if (craft.current && isCamera) {
+      if (idleSpin) {
+        craft.current.rotation.y =
+          CAMERA_REST_Y + Math.sin(state.clock.elapsedTime * 0.35) * 0.32;
+      } else {
+        craft.current.rotation.y +=
+          (CAMERA_REST_Y - craft.current.rotation.y) * Math.min(1, delta * 3.2);
+      }
+    } else if (craft.current && idleSpin) {
       craft.current.rotateZ(delta * 0.1);
     }
     if (root.current) {
@@ -65,8 +82,17 @@ export function Star({ star, selection, onSelect }: Props) {
           emitLight={selection.kind === "none" || active}
         />
       ) : (
-        <group ref={craft}>
-          <SatelliteCraft color={star.color} luminosity={star.luminosity} active={active} />
+        <group ref={craft} scale={isCamera ? 1.35 : 1}>
+          {isCamera ? (
+            <CameraCraft
+              color={star.color}
+              luminosity={star.luminosity}
+              active={active}
+              lit={!entering && (active || selection.kind === "none")}
+            />
+          ) : (
+            <SatelliteCraft color={star.color} luminosity={star.luminosity} active={active} />
+          )}
         </group>
       )}
       <mesh
@@ -98,7 +124,7 @@ export function Star({ star, selection, onSelect }: Props) {
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {showLabel && (
-        <Billboard follow position={[0, isHub ? 1.0 : 0.58, 0]}>
+        <Billboard follow position={[0, labelY, 0]}>
           <Html
             center
             distanceFactor={9}

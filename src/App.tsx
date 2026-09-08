@@ -9,9 +9,13 @@ import { Hud } from "./overlay/Hud";
 import { StarPanel } from "./overlay/StarPanel";
 import { Experience } from "./scene/Experience";
 import type { Selection } from "./types";
+import { isWorldId, loadWorld } from "./worlds/loadWorld";
 
 const TradingScene = lazy(() =>
   import("./worlds/TradingScene").then((mod) => ({ default: mod.TradingScene })),
+);
+const PhotographyScene = lazy(() =>
+  import("./worlds/PhotographyScene").then((mod) => ({ default: mod.PhotographyScene })),
 );
 
 function writeHash(selection: Selection) {
@@ -23,8 +27,8 @@ function writeHash(selection: Selection) {
   window.history.replaceState(null, "", next);
 }
 
-function warmupTrading() {
-  void import("./worlds/TradingScene");
+function warmupWorld(id: string) {
+  void loadWorld(id);
 }
 
 export default function App() {
@@ -77,7 +81,7 @@ export default function App() {
   }, [coverExit, select, selection]);
 
   useEffect(() => {
-    if (selection.kind === "star" && selection.id === "trading") warmupTrading();
+    if (selection.kind === "star" && isWorldId(selection.id)) warmupWorld(selection.id);
   }, [selection]);
 
   useEffect(() => {
@@ -88,7 +92,7 @@ export default function App() {
     let cancelled = false;
     let timeout = 0;
     const started = performance.now();
-    void import("./worlds/TradingScene").then(() => {
+    void loadWorld(selection.id).then(() => {
       if (cancelled) return;
       const remain = reduceMotion ? 0 : Math.max(0, 1100 - (performance.now() - started));
       timeout = window.setTimeout(() => {
@@ -126,8 +130,12 @@ export default function App() {
     };
   }, [back, select]);
 
-  const insideTrading = worldReady && selection.kind === "world" && selection.id === "trading";
+  const worldId = selection.kind === "world" ? selection.id : null;
+  const insideWorld = worldReady && worldId !== null && isWorldId(worldId);
   const diving = (selection.kind === "world" && !worldReady) || enterVeil || exitVeil;
+  const photoVeil =
+    (selection.kind === "world" && selection.id === "photography") ||
+    (selection.kind === "star" && selection.id === "photography" && (enterVeil || exitVeil));
 
   return (
     <>
@@ -151,9 +159,13 @@ export default function App() {
             gl.toneMappingExposure = 1.0;
           }}
         >
-          {insideTrading ? (
+          {insideWorld && worldId === "trading" ? (
             <Suspense fallback={null}>
               <TradingScene reduceMotion={reduceMotion} />
+            </Suspense>
+          ) : insideWorld && worldId === "photography" ? (
+            <Suspense fallback={null}>
+              <PhotographyScene reduceMotion={reduceMotion} />
             </Suspense>
           ) : (
             <Experience
@@ -166,9 +178,9 @@ export default function App() {
           )}
         </Canvas>
       </div>
-      <div className={`veil${diving ? " is-on" : ""}`} aria-hidden="true" />
+      <div className={`veil${diving ? " is-on" : ""}${photoVeil ? " is-photo" : ""}`} aria-hidden="true" />
       <Hud selection={selection} onHome={home} onBack={back} />
-      {!insideTrading && selection.kind !== "world" && (
+      {!insideWorld && selection.kind !== "world" && (
         <StarPanel selection={selection} onClose={back} onEnterWorld={(id) => select({ kind: "world", id })} />
       )}
     </>
