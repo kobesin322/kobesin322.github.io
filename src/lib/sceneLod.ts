@@ -5,6 +5,6 @@ export type SceneLod = "overview" | "focus" | "dive";
 
 export function lodFor(selection: Selection): SceneLod {
   if (selection.kind === "world") return "dive";
-  if (selection.kind === "none") return "overview";
+  if (selection.kind === "none" || selection.kind === "gallery" || selection.kind === "backtest") return "overview";
   return "focus";
 }

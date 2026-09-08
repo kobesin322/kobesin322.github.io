@@ -52,6 +52,13 @@ export function lookAtForSelection(selection: Selection): LookAt {
     return { position: toVec3(position), target: star.position };
   }
 
+  if (selection.kind === "gallery") {
+    return lookAtForSelection({ kind: "star", id: "photography" });
+  }
+  if (selection.kind === "backtest") {
+    return lookAtForSelection({ kind: "star", id: "trading" });
+  }
+
   const edge = getEdge(selection.id);
   const a = new Vector3(...getStar(edge.from).position);
   const b = new Vector3(...getStar(edge.to).position);

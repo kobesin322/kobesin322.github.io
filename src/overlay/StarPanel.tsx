@@ -66,7 +66,11 @@ function StarBody({
       )}
       {!isHub && !canEnter && <p className="concept-note">Concept — interior later</p>}
       {canEnter && (
-        <p className="concept-note">Pioneer world — click the star again to go inside</p>
+        <p className="concept-note">
+          Pioneer world — click the star again to go inside
+          {star.world === "photography" ? " · then the camera for prints" : ""}
+          {star.world === "trading" ? " · then Backtest for a walk-forward" : ""}
+        </p>
       )}
       <ul className="panel-bullets">
         {star.bullets.map((bullet) => (

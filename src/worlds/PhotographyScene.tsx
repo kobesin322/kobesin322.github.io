@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { CameraControls, Text } from "@react-three/drei";
+import { CameraControls, Html, Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import type CameraControlsImpl from "camera-controls";
 import { skipRaycast } from "../lib/skipRaycast";
@@ -10,6 +10,7 @@ import {
   HangingPrint,
   PRINTS,
 } from "./PhotographyStudio";
+import { lockOrbit } from "./useYDrag";
 
 function FitCamera() {
   const camera = useThree((state) => state.camera);
@@ -93,9 +94,95 @@ function Enlarger() {
 
 type Props = {
   reduceMotion: boolean;
+  onOpenGallery: () => void;
 };
 
-export function PhotographyScene({ reduceMotion }: Props) {
+function StudioHeroCamera({
+  iris,
+  onOpenGallery,
+}: {
+  iris: number;
+  onOpenGallery: () => void;
+}) {
+  const { controls } = useThree();
+  const [hovered, setHovered] = useState(false);
+  const down = useRef({ x: 0, y: 0 });
+
+  const tryOpen = (event: { stopPropagation: () => void; clientX: number; clientY: number }) => {
+    event.stopPropagation();
+    const dx = event.clientX - down.current.x;
+    const dy = event.clientY - down.current.y;
+    if (dx * dx + dy * dy > 36) return;
+    lockOrbit(controls, true);
+    document.body.style.cursor = "auto";
+    onOpenGallery();
+  };
+
+  return (
+    <group
+      position={[0, 1.05, 0]}
+      rotation={[0, -0.55, 0]}
+      scale={2.55}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHovered(true);
+        lockOrbit(controls, false);
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        lockOrbit(controls, true);
+        document.body.style.cursor = "auto";
+      }}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        lockOrbit(controls, false);
+        down.current = { x: event.clientX, y: event.clientY };
+      }}
+      onPointerUp={tryOpen}
+    >
+      <CameraCraft
+        color="#d8c2a4"
+        luminosity={0.7}
+        active
+        lit
+        glow={false}
+        detail="studio"
+        iris={iris}
+        pickable
+      />
+      <mesh>
+        <sphereGeometry args={[0.62, 16, 12]} />
+        <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
+      </mesh>
+      <Html
+        position={[0, 0.04, 0.2]}
+        center
+        zIndexRange={[25, 8]}
+      >
+        <button type="button" className="camera-hit" aria-label="Open print gallery" onClick={onOpenGallery} />
+      </Html>
+      <Html
+        position={[0, -0.22, 0.28]}
+        center
+        pointerEvents="none"
+        occlude={false}
+        zIndexRange={[40, 10]}
+      >
+        <button
+          type="button"
+          className={`iris-chip${hovered ? " is-hot" : ""}`}
+          style={{ pointerEvents: "auto" }}
+          onClick={onOpenGallery}
+        >
+          Print gallery
+        </button>
+      </Html>
+    </group>
+  );
+}
+
+export function PhotographyScene({ reduceMotion, onOpenGallery }: Props) {
   const [fStop, setFStop] = useState(2.8);
   const [printId, setPrintId] = useState<string | null>(null);
   const iris = fStopToIris(fStop);
@@ -134,17 +221,7 @@ export function PhotographyScene({ reduceMotion }: Props) {
         <meshStandardMaterial color="#2a1c16" metalness={0.45} roughness={0.4} />
       </mesh>
 
-      <group position={[0, 1.05, 0]} rotation={[0, -0.55, 0]} scale={2.55}>
-        <CameraCraft
-          color="#d8c2a4"
-          luminosity={0.7}
-          active
-          lit
-          glow={false}
-          detail="studio"
-          iris={iris}
-        />
-      </group>
+      <StudioHeroCamera iris={iris} onOpenGallery={onOpenGallery} />
 
       <Text
         position={[0, 2.92, 0.2]}
@@ -169,10 +246,10 @@ export function PhotographyScene({ reduceMotion }: Props) {
         outlineColor="#12080a"
         raycast={skipRaycast}
       >
-        DRAG OR CLICK THE IRIS · CLICK A PRINT · ORBIT THE STUDIO
+        CLICK THE CAMERA FOR PRINTS · DRAG THE IRIS · ORBIT
       </Text>
 
-      <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.15, 0, 1.65]} onChange={setFStop} />
+      <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.85, 0, 0.35]} onChange={setFStop} />
       {PRINTS.map((spec) => (
         <HangingPrint
           key={spec.id}

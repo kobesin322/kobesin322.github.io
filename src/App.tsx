@@ -2,6 +2,8 @@ import { Canvas } from "@react-three/fiber";
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { parseSelectionHash } from "./data/constellation";
+import { GalleryPage } from "./gallery/GalleryPage";
+import { BacktestPage } from "./backtest/BacktestPage";
 import { INTRO_POSITION } from "./lib/camera";
 import { usePageVisible } from "./hooks/usePageVisible";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
@@ -18,21 +20,24 @@ const PhotographyScene = lazy(() =>
   import("./worlds/PhotographyScene").then((mod) => ({ default: mod.PhotographyScene })),
 );
 
-const TradingScene = lazy(() =>
-  import("./worlds/TradingScene").then((mod) => ({ default: mod.TradingScene })),
-);
-
 function writeHash(selection: Selection) {
   if (selection.kind === "none") {
     window.history.replaceState(null, "", window.location.pathname);
     return;
   }
-  const next = selection.kind === "world" ? `#world/${selection.id}` : `#${selection.id}`;
+  const next =
+    selection.kind === "world"
+      ? `#world/${selection.id}`
+      : selection.kind === "gallery"
+        ? "#gallery"
+        : selection.kind === "backtest"
+          ? "#backtest"
+          : `#${selection.id}`;
   window.history.replaceState(null, "", next);
 }
 
-function warmupTrading() {
-  void import("./worlds/TradingScene");
+function warmupWorld(id: string) {
+  void loadWorld(id);
 }
 
 export default function App() {
@@ -48,6 +53,7 @@ export default function App() {
   const [enterVeil, setEnterVeil] = useState(false);
   const veilTimer = useRef(0);
   const enterTimer = useRef(0);
+  const skipWorldIntro = useRef(false);
 
   const select = useCallback((next: Selection) => {
     setSelection(next);
@@ -65,10 +71,13 @@ export default function App() {
     veilTimer.current = window.setTimeout(() => setExitVeil(false), 280);
   }, []);
 
-  useEffect(() => () => {
-    window.clearTimeout(veilTimer.current);
-    window.clearTimeout(enterTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(veilTimer.current);
+      window.clearTimeout(enterTimer.current);
+    },
+    [],
+  );
 
   const home = useCallback(() => {
     if (selection.kind === "world") coverExit();
@@ -76,6 +85,16 @@ export default function App() {
   }, [coverExit, select, selection.kind]);
 
   const back = useCallback(() => {
+    if (selection.kind === "gallery") {
+      skipWorldIntro.current = true;
+      select({ kind: "world", id: "photography" });
+      return;
+    }
+    if (selection.kind === "backtest") {
+      skipWorldIntro.current = true;
+      select({ kind: "world", id: "trading" });
+      return;
+    }
     if (selection.kind === "world") {
       coverExit();
       select({ kind: "star", id: selection.id });
@@ -85,10 +104,11 @@ export default function App() {
   }, [coverExit, select, selection]);
 
   useEffect(() => {
-    if (selection.kind === "star" && selection.id === "trading") warmupTrading();
+    if (selection.kind === "star" && isWorldId(selection.id)) warmupWorld(selection.id);
   }, [selection]);
 
   useEffect(() => {
+    if (selection.kind === "gallery" || selection.kind === "backtest") return;
     if (selection.kind !== "world") {
       setWorldReady(false);
       return;
@@ -96,9 +116,10 @@ export default function App() {
     let cancelled = false;
     let timeout = 0;
     const started = performance.now();
-    void import("./worlds/TradingScene").then(() => {
+    const skip = skipWorldIntro.current;
+    void loadWorld(selection.id).then(() => {
       if (cancelled) return;
-      const remain = reduceMotion ? 0 : Math.max(0, 1100 - (performance.now() - started));
+      const remain = reduceMotion || skip ? 0 : Math.max(0, 1100 - (performance.now() - started));
       timeout = window.setTimeout(() => {
         if (!cancelled) setWorldReady(true);
       }, remain);
@@ -111,6 +132,11 @@ export default function App() {
 
   useEffect(() => {
     if (!(worldReady && selection.kind === "world")) {
+      setEnterVeil(false);
+      return;
+    }
+    if (skipWorldIntro.current) {
+      skipWorldIntro.current = false;
       setEnterVeil(false);
       return;
     }
@@ -134,50 +160,88 @@ export default function App() {
     };
   }, [back, select]);
 
-  const insideTrading = worldReady && selection.kind === "world" && selection.id === "trading";
-  const diving = (selection.kind === "world" && !worldReady) || enterVeil || exitVeil;
+  const worldId = selection.kind === "world" ? selection.id : null;
+  const insideWorld = worldReady && worldId !== null && isWorldId(worldId);
+  const insideGallery = selection.kind === "gallery";
+  const insideBacktest = selection.kind === "backtest";
+  const inside2d = insideGallery || insideBacktest;
+  const diving =
+    (selection.kind === "world" && !worldReady) || enterVeil || exitVeil;
+  const photoVeil =
+    insideGallery ||
+    (selection.kind === "world" && selection.id === "photography") ||
+    (selection.kind === "star" && selection.id === "photography" && (enterVeil || exitVeil));
 
   return (
     <>
       <div className="noise" aria-hidden="true" />
-      <div className="canvas-wrap">
-        <Canvas
-          frameloop={pageVisible ? "always" : "never"}
-          camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 80 }}
-          dpr={reduceMotion ? [1, 1] : [1, 1.15]}
-          gl={{
-            antialias: false,
-            alpha: false,
-            toneMapping: ACESFilmicToneMapping,
-            outputColorSpace: SRGBColorSpace,
-            powerPreference: "high-performance",
-            stencil: false,
-            depth: true,
-          }}
-          onCreated={({ gl }) => {
-            gl.setClearColor("#05070c");
-            gl.toneMappingExposure = 1.0;
-          }}
-        >
-          {insideTrading ? (
-            <Suspense fallback={null}>
-              <TradingScene reduceMotion={reduceMotion} />
-            </Suspense>
-          ) : (
-            <Experience
-              selection={selection}
-              onSelect={select}
-              reduceMotion={reduceMotion}
-              snapCamera={snapCamera}
-              onSnapApplied={onSnapApplied}
-            />
-          )}
-        </Canvas>
-      </div>
-      <div className={`veil${diving ? " is-on" : ""}`} aria-hidden="true" />
+      {insideGallery ? (
+        <GalleryPage reduceMotion={reduceMotion} />
+      ) : insideBacktest ? (
+        <BacktestPage reduceMotion={reduceMotion} />
+      ) : (
+        <div className="canvas-wrap">
+          <Canvas
+            frameloop={pageVisible ? "always" : "never"}
+            camera={{ position: INTRO_POSITION, fov: 52, near: 0.1, far: 80 }}
+            dpr={reduceMotion ? [1, 1] : [1, 1.15]}
+            gl={{
+              antialias: false,
+              alpha: false,
+              toneMapping: ACESFilmicToneMapping,
+              outputColorSpace: SRGBColorSpace,
+              powerPreference: "high-performance",
+              stencil: false,
+              depth: true,
+            }}
+            onCreated={({ gl }) => {
+              gl.setClearColor("#05070c");
+              gl.toneMappingExposure = 1.0;
+            }}
+          >
+            {insideWorld && worldId === "trading" ? (
+              <Suspense fallback={null}>
+                <TradingScene
+                  reduceMotion={reduceMotion}
+                  onOpenBacktest={() => {
+                    skipWorldIntro.current = true;
+                    select({ kind: "backtest" });
+                  }}
+                />
+              </Suspense>
+            ) : insideWorld && worldId === "photography" ? (
+              <Suspense fallback={null}>
+                <PhotographyScene
+                  reduceMotion={reduceMotion}
+                  onOpenGallery={() => {
+                    skipWorldIntro.current = true;
+                    select({ kind: "gallery" });
+                  }}
+                />
+              </Suspense>
+            ) : (
+              <Experience
+                selection={selection}
+                onSelect={select}
+                reduceMotion={reduceMotion}
+                snapCamera={snapCamera}
+                onSnapApplied={onSnapApplied}
+              />
+            )}
+          </Canvas>
+        </div>
+      )}
+      <div
+        className={`veil${diving ? " is-on" : ""}${photoVeil ? " is-photo" : ""}`}
+        aria-hidden="true"
+      />
       <Hud selection={selection} onHome={home} onBack={back} />
-      {!insideTrading && selection.kind !== "world" && (
-        <StarPanel selection={selection} onClose={back} onEnterWorld={(id) => select({ kind: "world", id })} />
+      {!insideWorld && !inside2d && selection.kind !== "world" && (
+        <StarPanel
+          selection={selection}
+          onClose={back}
+          onEnterWorld={(id) => select({ kind: "world", id })}
+        />
       )}
     </>
   );
