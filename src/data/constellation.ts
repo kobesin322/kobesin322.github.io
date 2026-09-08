@@ -191,6 +191,7 @@ export function parseSelectionHash(hash: string): Selection | null {
   const id = hash.replace(/^#/, "").trim();
   if (!id) return null;
   if (id === "gallery") return { kind: "gallery" };
+  if (id === "backtest") return { kind: "backtest" };
   if (id.startsWith("world/")) {
     const worldId = id.slice(6);
     const star = STAR_MAP[worldId];

@@ -12,7 +12,7 @@ type Props = {
 };
 
 function selectionKey(selection: Selection): string {
-  if (selection.kind === "none" || selection.kind === "gallery") return selection.kind;
+  if (selection.kind === "none" || selection.kind === "gallery" || selection.kind === "backtest") return selection.kind;
   return `${selection.kind}:${selection.id}`;
 }
 

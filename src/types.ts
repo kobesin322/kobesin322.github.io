@@ -37,4 +37,5 @@ export type Selection =
   | { kind: "star"; id: string }
   | { kind: "edge"; id: string }
   | { kind: "world"; id: string }
-  | { kind: "gallery" };
+  | { kind: "gallery" }
+  | { kind: "backtest" };

@@ -3,6 +3,7 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { parseSelectionHash } from "./data/constellation";
 import { GalleryPage } from "./gallery/GalleryPage";
+import { BacktestPage } from "./backtest/BacktestPage";
 import { INTRO_POSITION } from "./lib/camera";
 import { usePageVisible } from "./hooks/usePageVisible";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
@@ -29,7 +30,9 @@ function writeHash(selection: Selection) {
       ? `#world/${selection.id}`
       : selection.kind === "gallery"
         ? "#gallery"
-        : `#${selection.id}`;
+        : selection.kind === "backtest"
+          ? "#backtest"
+          : `#${selection.id}`;
   window.history.replaceState(null, "", next);
 }
 
@@ -87,6 +90,11 @@ export default function App() {
       select({ kind: "world", id: "photography" });
       return;
     }
+    if (selection.kind === "backtest") {
+      skipWorldIntro.current = true;
+      select({ kind: "world", id: "trading" });
+      return;
+    }
     if (selection.kind === "world") {
       coverExit();
       select({ kind: "star", id: selection.id });
@@ -100,7 +108,7 @@ export default function App() {
   }, [selection]);
 
   useEffect(() => {
-    if (selection.kind === "gallery") return;
+    if (selection.kind === "gallery" || selection.kind === "backtest") return;
     if (selection.kind !== "world") {
       setWorldReady(false);
       return;
@@ -155,6 +163,8 @@ export default function App() {
   const worldId = selection.kind === "world" ? selection.id : null;
   const insideWorld = worldReady && worldId !== null && isWorldId(worldId);
   const insideGallery = selection.kind === "gallery";
+  const insideBacktest = selection.kind === "backtest";
+  const inside2d = insideGallery || insideBacktest;
   const diving =
     (selection.kind === "world" && !worldReady) || enterVeil || exitVeil;
   const photoVeil =
@@ -167,6 +177,8 @@ export default function App() {
       <div className="noise" aria-hidden="true" />
       {insideGallery ? (
         <GalleryPage reduceMotion={reduceMotion} />
+      ) : insideBacktest ? (
+        <BacktestPage reduceMotion={reduceMotion} />
       ) : (
         <div className="canvas-wrap">
           <Canvas
@@ -189,7 +201,13 @@ export default function App() {
           >
             {insideWorld && worldId === "trading" ? (
               <Suspense fallback={null}>
-                <TradingScene reduceMotion={reduceMotion} />
+                <TradingScene
+                  reduceMotion={reduceMotion}
+                  onOpenBacktest={() => {
+                    skipWorldIntro.current = true;
+                    select({ kind: "backtest" });
+                  }}
+                />
               </Suspense>
             ) : insideWorld && worldId === "photography" ? (
               <Suspense fallback={null}>
@@ -218,7 +236,7 @@ export default function App() {
         aria-hidden="true"
       />
       <Hud selection={selection} onHome={home} onBack={back} />
-      {!insideWorld && !insideGallery && selection.kind !== "world" && (
+      {!insideWorld && !inside2d && selection.kind !== "world" && (
         <StarPanel
           selection={selection}
           onClose={back}

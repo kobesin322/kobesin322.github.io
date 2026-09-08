@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { CameraControls, Text } from "@react-three/drei";
+import { CameraControls, Html, Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import type CameraControlsImpl from "camera-controls";
 import { skipRaycast } from "../lib/skipRaycast";
@@ -74,9 +74,10 @@ function DeskCamera({ reduceMotion }: { reduceMotion: boolean }) {
 
 type Props = {
   reduceMotion: boolean;
+  onOpenBacktest: () => void;
 };
 
-export function TradingScene({ reduceMotion }: Props) {
+export function TradingScene({ reduceMotion, onOpenBacktest }: Props) {
   const [draft, setDraft] = useState<TradeDraft>(initial);
   const math = useMemo(() => computeTrade(draft), [draft]);
 
@@ -138,8 +139,14 @@ export function TradingScene({ reduceMotion }: Props) {
         outlineColor="#031016"
         raycast={skipRaycast}
       >
-        DRAG THE LEVELS · ORBIT THE PIT
+        CLICK BACKTEST · DRAG THE LEVELS · ORBIT THE PIT
       </Text>
+
+      <Html position={[0, 0.42, 1.42]} center zIndexRange={[40, 10]}>
+        <button type="button" className="iris-chip bt-chip" onClick={onOpenBacktest}>
+          Run backtest
+        </button>
+      </Html>
 
       <RiskRewardVolume draft={draft} math={math} onPrice={onPrice} />
       <TradeControls3D draft={draft} math={math} onDraft={onDraft} />
