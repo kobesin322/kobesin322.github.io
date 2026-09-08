@@ -161,7 +161,7 @@ export function BacktestPage({ reduceMotion }: Props) {
       </div>
 
       <div className="bt-months" aria-label="Monthly returns">
-        {result.monthly.map((month) => (
+        {result.monthly.map((month, i) => (
           <span
             key={month.label}
             className={`bt-month${month.value >= 0 ? " is-up" : " is-down"}`}
