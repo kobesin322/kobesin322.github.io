@@ -94,7 +94,7 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
             begin(y);
           }}
         >
-          <circleGeometry args={[hovered ? 0.28 : 0.24, 24]} />
+          <circleGeometry args={[hovered ? 0.34 : 0.3, 24]} />
           <meshStandardMaterial
             color="#c41e3a"
             emissive="#c41e3a"
@@ -104,7 +104,7 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
           />
         </mesh>
         <mesh raycast={skipRaycast}>
-          <ringGeometry args={[0.2, 0.26, 20]} />
+          <ringGeometry args={[0.26, 0.34, 24]} />
           <meshBasicMaterial color="#c41e3a" transparent opacity={0.4} toneMapped={false} />
         </mesh>
         <Text
