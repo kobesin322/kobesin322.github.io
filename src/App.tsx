@@ -195,7 +195,10 @@ export default function App() {
               <Suspense fallback={null}>
                 <PhotographyScene
                   reduceMotion={reduceMotion}
-                  onOpenGallery={() => select({ kind: "gallery" })}
+                  onOpenGallery={() => {
+                    skipWorldIntro.current = true;
+                    select({ kind: "gallery" });
+                  }}
                 />
               </Suspense>
             ) : (
