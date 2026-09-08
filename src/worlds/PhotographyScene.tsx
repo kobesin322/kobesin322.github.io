@@ -119,7 +119,28 @@ function StudioHeroCamera({
   };
 
   return (
-    <group position={[0, 1.05, 0]} rotation={[0, -0.55, 0]} scale={2.55}>
+    <group
+      position={[0, 1.05, 0]}
+      rotation={[0, -0.55, 0]}
+      scale={2.55}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHovered(true);
+        lockOrbit(controls, false);
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        lockOrbit(controls, true);
+        document.body.style.cursor = "auto";
+      }}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        lockOrbit(controls, false);
+        down.current = { x: event.clientX, y: event.clientY };
+      }}
+      onPointerUp={tryOpen}
+    >
       <CameraCraft
         color="#d8c2a4"
         luminosity={0.7}
@@ -128,38 +149,32 @@ function StudioHeroCamera({
         glow={false}
         detail="studio"
         iris={iris}
+        pickable
       />
-      <mesh
-        position={[0, 0.02, 0.1]}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHovered(true);
-          lockOrbit(controls, false);
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          lockOrbit(controls, true);
-          document.body.style.cursor = "auto";
-        }}
-        onPointerDown={(event) => {
-          event.stopPropagation();
-          lockOrbit(controls, false);
-          down.current = { x: event.clientX, y: event.clientY };
-        }}
-        onPointerUp={tryOpen}
-      >
-        <boxGeometry args={[0.95, 0.72, 0.95]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      <mesh>
+        <sphereGeometry args={[0.62, 16, 12]} />
+        <meshBasicMaterial transparent opacity={0.001} depthWrite={false} />
       </mesh>
+      <Html
+        position={[0, 0.04, 0.2]}
+        center
+        zIndexRange={[25, 8]}
+      >
+        <button type="button" className="camera-hit" aria-label="Open print gallery" onClick={onOpenGallery} />
+      </Html>
       <Html
         position={[0, -0.22, 0.28]}
         center
+        pointerEvents="none"
         occlude={false}
-        style={{ pointerEvents: "auto" }}
         zIndexRange={[40, 10]}
       >
-        <button type="button" className={`iris-chip${hovered ? " is-hot" : ""}`} onClick={onOpenGallery}>
+        <button
+          type="button"
+          className={`iris-chip${hovered ? " is-hot" : ""}`}
+          style={{ pointerEvents: "auto" }}
+          onClick={onOpenGallery}
+        >
           Print gallery
         </button>
       </Html>

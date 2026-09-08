@@ -259,6 +259,15 @@ a { color: inherit; }
   background: color-mix(in srgb, #c41e3a 35%, #12080a);
 }
 
+.camera-hit {
+  width: 168px;
+  height: 128px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .gallery {
   --accent: #c41e3a;
   position: fixed;
