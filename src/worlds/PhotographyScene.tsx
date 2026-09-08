@@ -172,7 +172,7 @@ export function PhotographyScene({ reduceMotion }: Props) {
         DRAG THE IRIS · CLICK A PRINT · ORBIT THE STUDIO
       </Text>
 
-      <ApertureControl fStop={fStop} y0={0.7} y1={2.15} position={[2.35, 0, 0.85]} onChange={setFStop} />
+      <ApertureControl fStop={fStop} y0={0.55} y1={2.25} position={[1.15, 0, 1.65]} onChange={setFStop} />
       {PRINTS.map((spec) => (
         <HangingPrint
           key={spec.id}
