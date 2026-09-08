@@ -16,7 +16,7 @@ export type StarNode = {
    */
   luminosity: number;
   /** If set, a second click dives into this interior world. */
-  world?: "trading" | "photography";
+  world?: "trading" | "photography" | "poker";
   status: StarStatus;
   lede?: string;
   meta?: string[];

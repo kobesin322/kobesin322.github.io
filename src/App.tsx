@@ -19,6 +19,9 @@ const TradingScene = lazy(() =>
 const PhotographyScene = lazy(() =>
   import("./worlds/PhotographyScene").then((mod) => ({ default: mod.PhotographyScene })),
 );
+const PokerScene = lazy(() =>
+  import("./worlds/PokerScene").then((mod) => ({ default: mod.PokerScene })),
+);
 
 function writeHash(selection: Selection) {
   if (selection.kind === "none") {
@@ -171,6 +174,9 @@ export default function App() {
     insideGallery ||
     (selection.kind === "world" && selection.id === "photography") ||
     (selection.kind === "star" && selection.id === "photography" && (enterVeil || exitVeil));
+  const pokerVeil =
+    (selection.kind === "world" && selection.id === "poker") ||
+    (selection.kind === "star" && selection.id === "poker" && (enterVeil || exitVeil));
 
   return (
     <>
@@ -219,6 +225,10 @@ export default function App() {
                   }}
                 />
               </Suspense>
+            ) : insideWorld && worldId === "poker" ? (
+              <Suspense fallback={null}>
+                <PokerScene reduceMotion={reduceMotion} />
+              </Suspense>
             ) : (
               <Experience
                 selection={selection}
@@ -232,7 +242,7 @@ export default function App() {
         </div>
       )}
       <div
-        className={`veil${diving ? " is-on" : ""}${photoVeil ? " is-photo" : ""}`}
+        className={`veil${diving ? " is-on" : ""}${photoVeil ? " is-photo" : ""}${pokerVeil ? " is-poker" : ""}`}
         aria-hidden="true"
       />
       <Hud selection={selection} onHome={home} onBack={back} />
