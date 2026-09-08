@@ -25,7 +25,8 @@ GitHub Pages deploys `dist/` from `main` via `.github/workflows/pages.yml`. Set 
 ## Scene
 
 - Land in the network. Drag to orbit.
-- Click a star to fly in. The Hub (`Kobe Sin`) is the only live interior; other stars are concept stubs.
+- Click a star to fly in. The Hub is live. Trading and Photography are interiors — click the star again (or Enter world) to dive in.
+- Photography’s star is a 3D camera, not a satellite. Leave world returns to that focused star.
 - Click a link to fly along it and read why the two domains connect.
-- `Return`, the `KS` mark, or Escape goes back to the overview.
-- Share a star with a hash, e.g. `/#hub` or `/#forecasting`.
+- `Return`, the `KS` mark, or Escape goes back (world → focused star → overview).
+- Share a star with a hash, e.g. `/#hub`, `/#trading`, `/#world/photography`.

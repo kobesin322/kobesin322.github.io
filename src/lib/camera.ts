@@ -27,6 +27,13 @@ export function lookAtForSelection(selection: Selection): LookAt {
     if (star.id === "hub") {
       return { position: [3.5, 1.7, 4.2], target: [0, 0, 0] };
     }
+    if (star.id === "photography") {
+      const [x, y, z] = star.position;
+      return {
+        position: [x + 0.95, y + 0.48, z + 1.55],
+        target: [x + 0.08, y + 0.05, z + 0.16],
+      };
+    }
     const radial =
       target.lengthSq() < 0.04 ? new Vector3(0, 0.2, 1) : target.clone().normalize();
     const position = target

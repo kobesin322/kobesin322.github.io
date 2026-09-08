@@ -9,6 +9,14 @@ import { Hud } from "./overlay/Hud";
 import { StarPanel } from "./overlay/StarPanel";
 import { Experience } from "./scene/Experience";
 import type { Selection } from "./types";
+import { isWorldId, loadWorld } from "./worlds/loadWorld";
+
+const TradingScene = lazy(() =>
+  import("./worlds/TradingScene").then((mod) => ({ default: mod.TradingScene })),
+);
+const PhotographyScene = lazy(() =>
+  import("./worlds/PhotographyScene").then((mod) => ({ default: mod.PhotographyScene })),
+);
 
 const TradingScene = lazy(() =>
   import("./worlds/TradingScene").then((mod) => ({ default: mod.TradingScene })),
