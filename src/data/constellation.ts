@@ -145,6 +145,23 @@ export const STARS: StarNode[] = [
     ],
     chips: ["Framing", "Exposure", "Prints"],
   },
+  {
+    id: "poker",
+    title: "Poker",
+    tagline: "Starting hands · size · the board is a filter",
+    kicker: "Side · Cards",
+    position: [-5.2, 1.1, -4.4],
+    color: "#7ee0a8",
+    luminosity: 0.66,
+    world: "poker",
+    status: "concept",
+    bullets: [
+      "Ace–King is a starting hand, not a result. The chips are the size you can lose.",
+      "Same loop as the rest of the work: write the rule, take the flop, update.",
+      "A pair stuck together is one object — the decision, not a highlight reel.",
+    ],
+    chips: ["Starting hand", "Sizing", "Board texture"],
+  },
 ];
 
 export const EDGES: EdgeLink[] = [
@@ -165,6 +182,9 @@ export const EDGES: EdgeLink[] = [
   { id: "hub-photography", from: "hub", to: "photography", label: "A frame is a decision" },
   { id: "photography-craft", from: "photography", to: "craft", label: "Prints are evidence" },
   { id: "photography-geo", from: "photography", to: "geo", label: "Place, then the tell" },
+  { id: "hub-poker", from: "hub", to: "poker", label: "A pair is a decision" },
+  { id: "poker-trading", from: "poker", to: "trading", label: "Size the hand, size the trade" },
+  { id: "poker-craft", from: "poker", to: "craft", label: "The hand has to run" },
 ];
 
 export const STAR_MAP: Record<string, StarNode> = Object.fromEntries(

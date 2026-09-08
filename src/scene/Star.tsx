@@ -5,6 +5,7 @@ import type { Group } from "three";
 import type { Selection, StarNode } from "../types";
 import { CameraCraft } from "./CameraCraft";
 import { HubCore } from "./HubCore";
+import { PokerCraft } from "./PokerCraft";
 import { SatelliteCraft } from "./SatelliteCraft";
 
 type Props = {
@@ -20,6 +21,7 @@ function isFocused(starId: string, selection: Selection): boolean {
 }
 
 const CAMERA_REST_Y = -0.55;
+const POKER_REST_Y = -0.5;
 
 export function Star({ star, selection, onSelect }: Props) {
   const craft = useRef<Group>(null);
@@ -28,32 +30,33 @@ export function Star({ star, selection, onSelect }: Props) {
   const [hovered, setHovered] = useState(false);
   const isHub = star.id === "hub";
   const isCamera = star.world === "photography";
+  const isPoker = star.world === "poker";
+  const restY = isPoker ? POKER_REST_Y : CAMERA_REST_Y;
+  const posed = isCamera || isPoker;
   const entering = selection.kind === "world" && selection.id === star.id;
   const focused = isFocused(star.id, selection);
   const active = focused || hovered;
   const showLabel = !entering && (isHub || hovered || focused);
   const idleSpin = !isHub && !entering && !focused && selection.kind === "none";
   const down = useRef({ x: 0, y: 0 });
-  const hitRadius = isHub ? 0.72 : isCamera ? 0.92 : 0.5;
-  const labelY = isHub ? 1.0 : isCamera ? 0.92 : 0.58;
+  const hitRadius = isHub ? 0.72 : posed ? 0.92 : 0.5;
+  const labelY = isHub ? 1.0 : posed ? 0.92 : 0.58;
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
-    if (isCamera) {
-      craft.current.rotation.set(0, CAMERA_REST_Y, 0);
+    if (posed) {
+      craft.current.rotation.set(0, restY, 0);
       return;
     }
     craft.current.lookAt(0, 0, 0);
-  }, [isHub, isCamera, star.position]);
+  }, [isHub, posed, restY, star.position]);
 
   useFrame((state, delta) => {
-    if (craft.current && isCamera) {
+    if (craft.current && posed) {
       if (idleSpin) {
-        craft.current.rotation.y =
-          CAMERA_REST_Y + Math.sin(state.clock.elapsedTime * 0.35) * 0.32;
+        craft.current.rotation.y = restY + Math.sin(state.clock.elapsedTime * 0.35) * 0.32;
       } else {
-        craft.current.rotation.y +=
-          (CAMERA_REST_Y - craft.current.rotation.y) * Math.min(1, delta * 3.2);
+        craft.current.rotation.y += (restY - craft.current.rotation.y) * Math.min(1, delta * 3.2);
       }
     } else if (craft.current && idleSpin) {
       craft.current.rotateZ(delta * 0.1);
@@ -82,9 +85,16 @@ export function Star({ star, selection, onSelect }: Props) {
           emitLight={selection.kind === "none" || active}
         />
       ) : (
-        <group ref={craft} scale={isCamera ? 1.35 : 1}>
+        <group ref={craft} scale={posed ? 1.35 : 1}>
           {isCamera ? (
             <CameraCraft
+              color={star.color}
+              luminosity={star.luminosity}
+              active={active}
+              lit={!entering && (active || selection.kind === "none")}
+            />
+          ) : isPoker ? (
+            <PokerCraft
               color={star.color}
               luminosity={star.luminosity}
               active={active}

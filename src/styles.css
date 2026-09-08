@@ -242,6 +242,9 @@ a { color: inherit; }
 .veil.is-photo {
   background: radial-gradient(circle at 50% 45%, #c41e3a 0%, #12080a 62%);
 }
+.veil.is-poker {
+  background: radial-gradient(circle at 50% 45%, #7ee0a8 0%, #06140e 62%);
+}
 
 .iris-chip {
   font-family: var(--mono);

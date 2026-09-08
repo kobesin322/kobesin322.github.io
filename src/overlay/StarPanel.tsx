@@ -70,6 +70,7 @@ function StarBody({
           Pioneer world — click the star again to go inside
           {star.world === "photography" ? " · then the camera for prints" : ""}
           {star.world === "trading" ? " · then Backtest for a walk-forward" : ""}
+          {star.world === "poker" ? " · then orbit the felt" : ""}
         </p>
       )}
       <ul className="panel-bullets">

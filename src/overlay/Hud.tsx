@@ -13,11 +13,13 @@ function hint(selection: Selection): string {
   if (selection.kind === "world") {
     if (selection.id === "photography") return "Click the camera for the print gallery · orbit the studio";
     if (selection.id === "trading") return "Click Backtest for the walk-forward · orbit the pit";
+    if (selection.id === "poker") return "Orbit the felt · Ace–King is the starting hand";
     return "Orbit the pit · drag stop, entry, target";
   }
   if (selection.kind === "star") {
     const star = getStar(selection.id);
     if (star.world === "photography") return "Click the camera again to go inside";
+    if (star.world === "poker") return "Click the chips again to go inside";
     if (star.world) return "Click the star again to go inside";
     return "Return to the network";
   }
