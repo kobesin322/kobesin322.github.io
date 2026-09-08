@@ -50,6 +50,7 @@ export default function App() {
   const [enterVeil, setEnterVeil] = useState(false);
   const veilTimer = useRef(0);
   const enterTimer = useRef(0);
+  const skipWorldIntro = useRef(false);
 
   const select = useCallback((next: Selection) => {
     setSelection(next);
@@ -82,6 +83,7 @@ export default function App() {
 
   const back = useCallback(() => {
     if (selection.kind === "gallery") {
+      skipWorldIntro.current = true;
       select({ kind: "world", id: "photography" });
       return;
     }
@@ -98,6 +100,7 @@ export default function App() {
   }, [selection]);
 
   useEffect(() => {
+    if (selection.kind === "gallery") return;
     if (selection.kind !== "world") {
       setWorldReady(false);
       return;
@@ -105,9 +108,10 @@ export default function App() {
     let cancelled = false;
     let timeout = 0;
     const started = performance.now();
+    const skip = skipWorldIntro.current;
     void loadWorld(selection.id).then(() => {
       if (cancelled) return;
-      const remain = reduceMotion ? 0 : Math.max(0, 1100 - (performance.now() - started));
+      const remain = reduceMotion || skip ? 0 : Math.max(0, 1100 - (performance.now() - started));
       timeout = window.setTimeout(() => {
         if (!cancelled) setWorldReady(true);
       }, remain);
@@ -120,6 +124,11 @@ export default function App() {
 
   useEffect(() => {
     if (!(worldReady && selection.kind === "world")) {
+      setEnterVeil(false);
+      return;
+    }
+    if (skipWorldIntro.current) {
+      skipWorldIntro.current = false;
       setEnterVeil(false);
       return;
     }
