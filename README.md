@@ -27,6 +27,7 @@ GitHub Pages deploys `dist/` from `main` via `.github/workflows/pages.yml`. Set 
 - Land in the network. Drag to orbit.
 - Click a star to fly in. The Hub is live. Trading and Photography are interiors — click the star again (or Enter world) to dive in.
 - Photography’s star is a 3D camera, not a satellite. Leave world returns to that focused star.
+- In the studio, click the camera (or Print gallery) for a 2D CSS coverflow of prints — no Three.js on that page. Swipe, drag, wheel, or arrows.
 - Click a link to fly along it and read why the two domains connect.
-- `Return`, the `KS` mark, or Escape goes back (world → focused star → overview).
-- Share a star with a hash, e.g. `/#hub`, `/#trading`, `/#world/photography`.
+- `Return`, the `KS` mark, or Escape goes back (gallery → studio → focused star → overview).
+- Share a star with a hash, e.g. `/#hub`, `/#trading`, `/#world/photography`, `/#gallery`.

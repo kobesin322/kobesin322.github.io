@@ -8,9 +8,14 @@ type Props = {
 };
 
 function hint(selection: Selection): string {
-  if (selection.kind === "world") return "Orbit the pit · drag stop, entry, target";
+  if (selection.kind === "gallery") return "Swipe the prints · drag, wheel, or arrows";
+  if (selection.kind === "world") {
+    if (selection.id === "photography") return "Click the camera for the print gallery · orbit the studio";
+    return "Orbit the pit · drag stop, entry, target";
+  }
   if (selection.kind === "star") {
     const star = getStar(selection.id);
+    if (star.world === "photography") return "Click the camera again to go inside";
     if (star.world) return "Click the star again to go inside";
     return "Return to the network";
   }
@@ -29,7 +34,11 @@ export function Hud({ selection, onHome, onBack }: Props) {
       <div className="hud-actions">
         {away && (
           <button type="button" className="ghost" onClick={onBack}>
-            {selection.kind === "world" ? "Leave world" : "Return"}
+            {selection.kind === "gallery"
+              ? "Leave gallery"
+              : selection.kind === "world"
+                ? "Leave world"
+                : "Return"}
           </button>
         )}
         <a className="ghost" href="https://github.com/kobesin322" target="_blank" rel="noreferrer">
