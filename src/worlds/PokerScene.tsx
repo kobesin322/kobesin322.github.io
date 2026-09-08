@@ -110,7 +110,7 @@ export function PokerScene({ reduceMotion }: Props) {
       </mesh>
       <Rail />
 
-      <group position={[0, 0.95, 0]} rotation={[0, -0.5, 0]} scale={2.7}>
+      <group position={[0, 0.95, 0]} rotation={[0, -0.5, 0]} scale={2.15}>
         <PokerCraft color="#7ee0a8" luminosity={0.7} active lit glow={false} detail="table" />
       </group>
 

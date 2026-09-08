@@ -67,11 +67,11 @@ function Chip({
   return (
     <group position={[0, y, 0]} rotation={[0, rotY, 0]}>
       <mesh raycast={cast}>
-        <cylinderGeometry args={[0.15, 0.15, 0.034, segs]} />
+        <cylinderGeometry args={[0.22, 0.22, 0.046, segs]} />
         <meshStandardMaterial color={body} roughness={0.48} metalness={0.12} />
       </mesh>
-      <mesh position={[0, 0.018, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={cast}>
-        <ringGeometry args={[0.052, 0.098, segs]} />
+      <mesh position={[0, 0.024, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={cast}>
+        <ringGeometry args={[0.078, 0.15, segs]} />
         <meshStandardMaterial color={edge} metalness={0.62} roughness={0.26} />
       </mesh>
       {Array.from({ length: spots }, (_, i) => {
@@ -79,11 +79,11 @@ function Chip({
         return (
           <mesh
             key={i}
-            position={[Math.cos(a) * 0.148, 0, Math.sin(a) * 0.148]}
+            position={[Math.cos(a) * 0.216, 0, Math.sin(a) * 0.216]}
             rotation={[0, -a, 0]}
             raycast={cast}
           >
-            <boxGeometry args={[0.028, 0.036, 0.012]} />
+            <boxGeometry args={[0.038, 0.048, 0.016]} />
             <meshStandardMaterial
               color={i % 2 === 0 ? edge : "#eceadf"}
               metalness={0.35}
@@ -114,16 +114,16 @@ function RankCard({
   return (
     <group position={position} rotation={rotation}>
       <mesh raycast={cast}>
-        <boxGeometry args={[0.17, 0.238, 0.012]} />
+        <boxGeometry args={[0.22, 0.31, 0.014]} />
         <meshStandardMaterial color="#1a1c16" roughness={0.45} metalness={0.15} />
       </mesh>
-      <mesh position={[0, 0, 0.007]} raycast={cast}>
-        <boxGeometry args={[0.154, 0.22, 0.006]} />
+      <mesh position={[0, 0, 0.008]} raycast={cast}>
+        <boxGeometry args={[0.198, 0.286, 0.006]} />
         <meshStandardMaterial color="#f3eee4" roughness={0.58} side={DoubleSide} />
       </mesh>
       <Text
-        position={[-0.048, 0.078, 0.012]}
-        fontSize={0.04}
+        position={[-0.068, 0.108, 0.014]}
+        fontSize={0.052}
         color="#121418"
         anchorX="center"
         anchorY="middle"
@@ -132,8 +132,8 @@ function RankCard({
         {rank}
       </Text>
       <Text
-        position={[0.048, -0.078, 0.012]}
-        fontSize={0.04}
+        position={[0.068, -0.108, 0.014]}
+        fontSize={0.052}
         color="#121418"
         anchorX="center"
         anchorY="middle"
@@ -142,23 +142,23 @@ function RankCard({
       >
         {rank}
       </Text>
-      <Spade position={[0, extra ? -0.012 : 0.004, 0.014]} scale={centerScale} cast={cast} />
+      <Spade position={[0, extra ? -0.016 : 0.006, 0.016]} scale={centerScale} cast={cast} />
       {extra && (
         <>
-          <mesh position={[-0.028, 0.042, 0.014]} raycast={cast}>
-            <boxGeometry args={[0.072, 0.014, 0.01]} />
+          <mesh position={[-0.036, 0.055, 0.016]} raycast={cast}>
+            <boxGeometry args={[0.09, 0.016, 0.01]} />
             <meshStandardMaterial color="#121418" roughness={0.4} />
           </mesh>
-          <mesh position={[-0.03, 0.06, 0.014]} raycast={cast}>
-            <boxGeometry args={[0.014, 0.028, 0.01]} />
+          <mesh position={[-0.038, 0.078, 0.016]} raycast={cast}>
+            <boxGeometry args={[0.016, 0.034, 0.01]} />
             <meshStandardMaterial color="#121418" roughness={0.4} />
           </mesh>
-          <mesh position={[0, 0.066, 0.014]} raycast={cast}>
-            <boxGeometry args={[0.014, 0.036, 0.01]} />
+          <mesh position={[0, 0.086, 0.016]} raycast={cast}>
+            <boxGeometry args={[0.016, 0.044, 0.01]} />
             <meshStandardMaterial color="#121418" roughness={0.4} />
           </mesh>
-          <mesh position={[0.03, 0.06, 0.014]} raycast={cast}>
-            <boxGeometry args={[0.014, 0.028, 0.01]} />
+          <mesh position={[0.038, 0.078, 0.016]} raycast={cast}>
+            <boxGeometry args={[0.016, 0.034, 0.01]} />
             <meshStandardMaterial color="#121418" roughness={0.4} />
           </mesh>
         </>
@@ -187,27 +187,28 @@ export function PokerCraft({
 
   return (
     <group>
-      <Chip y={0.017} rotY={0.12} body="#8a1c2c" edge={color} segs={segs} spots={spots} cast={cast} />
-      <Chip y={0.052} rotY={-0.28} body="#16181c" edge={color} segs={segs} spots={spots} cast={cast} />
-      <group position={[0.01, 0.09, 0.02]}>
+      <Chip y={0.023} rotY={0.14} body="#8a1c2c" edge={color} segs={segs} spots={spots} cast={cast} />
+      <Chip y={0.072} rotY={-0.32} body="#16181c" edge={color} segs={segs} spots={spots} cast={cast} />
+      {/* One glued starting hand: Ace and King overlap as a single upright combo. */}
+      <group position={[0.01, 0.118, 0.02]} rotation={[-0.38, 0.18, 0.04]}>
         <RankCard
           rank="A"
-          position={[-0.03, 0.07, 0.01]}
-          rotation={[-0.72, -0.22, 0.08]}
-          centerScale={1.05}
+          position={[-0.016, 0.1, 0]}
+          rotation={[0, -0.05, 0.03]}
+          centerScale={1.2}
           cast={cast}
         />
         <RankCard
           rank="K"
-          position={[0.05, 0.075, 0.02]}
-          rotation={[-0.78, 0.3, -0.06]}
-          centerScale={0.72}
+          position={[0.028, 0.108, 0.012]}
+          rotation={[0.02, 0.1, -0.02]}
+          centerScale={0.82}
           extra
           cast={cast}
         />
       </group>
-      <mesh position={[0.02, 0.04, 0.02]} raycast={cast}>
-        <sphereGeometry args={[0.018, 8, 8]} />
+      <mesh position={[0.02, 0.05, 0.03]} raycast={cast}>
+        <sphereGeometry args={[0.022, 8, 8]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
