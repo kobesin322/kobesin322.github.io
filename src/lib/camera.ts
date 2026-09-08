@@ -45,13 +45,6 @@ export function lookAtForSelection(selection: Selection): LookAt {
 
   if (selection.kind === "world") {
     const star = getStar(selection.id);
-    if (star.id === "photography") {
-      const [x, y, z] = star.position;
-      return {
-        position: [x + 0.14, y + 0.05, z + 0.4],
-        target: [x + 0.06, y + 0.02, z + 0.22],
-      };
-    }
     const target = new Vector3(...star.position);
     const radial =
       target.lengthSq() < 0.04 ? new Vector3(0, 0.15, 1) : target.clone().normalize();

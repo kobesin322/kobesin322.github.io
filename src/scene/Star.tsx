@@ -27,7 +27,6 @@ export function Star({ star, selection, onSelect }: Props) {
   const scale = useRef(1);
   const [hovered, setHovered] = useState(false);
   const isHub = star.id === "hub";
-  const isCamera = star.world === "photography";
   const entering = selection.kind === "world" && selection.id === star.id;
   const focused = isFocused(star.id, selection);
   const active = focused || hovered;
@@ -46,16 +45,8 @@ export function Star({ star, selection, onSelect }: Props) {
     craft.current.lookAt(0, 0, 0);
   }, [isHub, isCamera, star.position]);
 
-  useFrame((state, delta) => {
-    if (craft.current && isCamera) {
-      if (idleSpin) {
-        craft.current.rotation.y =
-          CAMERA_REST_Y + Math.sin(state.clock.elapsedTime * 0.35) * 0.32;
-      } else {
-        craft.current.rotation.y +=
-          (CAMERA_REST_Y - craft.current.rotation.y) * Math.min(1, delta * 3.2);
-      }
-    } else if (craft.current && idleSpin) {
+  useFrame((_, delta) => {
+    if (craft.current && idleSpin) {
       craft.current.rotateZ(delta * 0.1);
     }
     if (root.current) {

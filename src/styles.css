@@ -239,24 +239,6 @@ a { color: inherit; }
   transition: opacity 0.45s ease;
 }
 .veil.is-on { opacity: 1; }
-.veil.is-photo {
-  background: radial-gradient(circle at 50% 45%, #c41e3a 0%, #12080a 62%);
-}
-
-.iris-chip {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: #f2e4d8;
-  background: color-mix(in srgb, #12080a 72%, transparent);
-  border: 1px solid #c41e3a;
-  border-radius: 999px;
-  padding: 6px 12px;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-}
-.iris-chip:hover {
-  background: color-mix(in srgb, #c41e3a 35%, #12080a);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .panel {

@@ -15,8 +15,8 @@ export type StarNode = {
    * Used for glow scale, emissive intensity, and beam mix.
    */
   luminosity: number;
-  /** If set, a second click dives into this interior world. */
-  world?: "trading" | "photography";
+  /** If set, a second click dives into this interior world. Pioneer: trading. */
+  world?: "trading";
   status: StarStatus;
   lede?: string;
   meta?: string[];
