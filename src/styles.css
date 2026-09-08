@@ -239,6 +239,9 @@ a { color: inherit; }
   transition: opacity 0.45s ease;
 }
 .veil.is-on { opacity: 1; }
+.veil.is-photo {
+  background: radial-gradient(circle at 50% 45%, #c41e3a 0%, #12080a 62%);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .panel {

@@ -128,6 +128,23 @@ export const STARS: StarNode[] = [
     ],
     chips: ["Canvas", "Forecast band", "Position sizer"],
   },
+  {
+    id: "photography",
+    title: "Photography",
+    tagline: "Seeing · framing · prints that hold",
+    kicker: "Side · Seeing",
+    position: [4.4, 0.6, 4.8],
+    color: "#d8c2a4",
+    luminosity: 0.68,
+    world: "photography",
+    status: "concept",
+    bullets: [
+      "A frame is a decision: what stays in, what is cut, what the light is doing.",
+      "The darkroom is a review loop — exposure, contrast, a print you can hold.",
+      "Prints are evidence. Screenshots are weak the same way a chart without a next action is.",
+    ],
+    chips: ["Framing", "Exposure", "Prints"],
+  },
 ];
 
 export const EDGES: EdgeLink[] = [
@@ -145,6 +162,9 @@ export const EDGES: EdgeLink[] = [
   },
   { id: "trading-craft", from: "trading", to: "craft", label: "Sizer lives with the journal" },
   { id: "agents-dashboards", from: "agents", to: "dashboards", label: "Digest becomes a view" },
+  { id: "hub-photography", from: "hub", to: "photography", label: "A frame is a decision" },
+  { id: "photography-craft", from: "photography", to: "craft", label: "Prints are evidence" },
+  { id: "photography-geo", from: "photography", to: "geo", label: "Place, then the tell" },
 ];
 
 export const STAR_MAP: Record<string, StarNode> = Object.fromEntries(

@@ -8,7 +8,10 @@ type Props = {
 };
 
 function hint(selection: Selection): string {
-  if (selection.kind === "world") return "Orbit the pit · drag stop, entry, target";
+  if (selection.kind === "world") {
+    if (selection.id === "photography") return "Orbit the studio · drag the iris · click a print";
+    return "Orbit the pit · drag stop, entry, target";
+  }
   if (selection.kind === "star") {
     const star = getStar(selection.id);
     if (star.world) return "Click the star again to go inside";
