@@ -169,7 +169,7 @@ function RankCard({
 
 /**
  * Compact starting hand in the constellation language: two chips stacked,
- * Ace–King of spades fanned and glued as one readable object.
+ * Ace–King of spades stuck together as one readable object.
  */
 export function PokerCraft({
   color,
@@ -193,15 +193,15 @@ export function PokerCraft({
       <group position={[0.01, 0.118, 0.02]} rotation={[-0.38, 0.18, 0.04]}>
         <RankCard
           rank="A"
-          position={[-0.016, 0.1, 0]}
-          rotation={[0, -0.05, 0.03]}
+          position={[-0.05, 0.1, -0.006]}
+          rotation={[0, -0.12, 0.04]}
           centerScale={1.2}
           cast={cast}
         />
         <RankCard
           rank="K"
-          position={[0.028, 0.108, 0.012]}
-          rotation={[0.02, 0.1, -0.02]}
+          position={[0.055, 0.11, 0.016]}
+          rotation={[0.02, 0.14, -0.03]}
           centerScale={0.82}
           extra
           cast={cast}
