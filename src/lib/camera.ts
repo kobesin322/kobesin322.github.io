@@ -30,8 +30,8 @@ export function lookAtForSelection(selection: Selection): LookAt {
     if (star.id === "photography") {
       const [x, y, z] = star.position;
       return {
-        position: [x + 1.22, y + 0.58, z + 2.05],
-        target: [x + 0.06, y + 0.04, z + 0.14],
+        position: [x + 0.95, y + 0.48, z + 1.55],
+        target: [x + 0.08, y + 0.05, z + 0.16],
       };
     }
     const radial =

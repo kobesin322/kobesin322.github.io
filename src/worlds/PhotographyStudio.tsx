@@ -18,10 +18,12 @@ export function yToFStop(y: number, y0: number, y1: number) {
   const t = Math.min(1, Math.max(0, (y - y0) / (y1 - y0)));
   const min = Math.log(F_STOPS[0]);
   const max = Math.log(F_STOPS[F_STOPS.length - 1]);
-  const f = Math.exp(min + t * (max - min));
-  return F_STOPS.reduce((best, stop) =>
-    Math.abs(stop - f) < Math.abs(best - f) ? stop : best,
-  );
+  return Math.exp(min + t * (max - min));
+}
+
+export function formatFStop(fStop: number) {
+  if (fStop >= 9.5) return fStop.toFixed(0);
+  return fStop.toFixed(1);
 }
 
 export function fStopToY(fStop: number, y0: number, y1: number) {
@@ -50,8 +52,28 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
   return (
     <group position={position}>
       <mesh position={[0, (y0 + y1) / 2, 0]} raycast={skipRaycast}>
-        <boxGeometry args={[0.06, y1 - y0 + 0.2, 0.06]} />
+        <boxGeometry args={[0.07, y1 - y0 + 0.28, 0.07]} />
         <meshStandardMaterial color="#2a1816" metalness={0.4} roughness={0.45} />
+      </mesh>
+      <mesh
+        position={[0, (y0 + y1) / 2, 0]}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          lockOrbit(controls, false);
+          document.body.style.cursor = "ns-resize";
+        }}
+        onPointerOut={() => {
+          if (!dragging.current) lockOrbit(controls, true);
+          document.body.style.cursor = "auto";
+        }}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          lockOrbit(controls, false);
+          begin(event.point.y);
+        }}
+      >
+        <boxGeometry args={[0.32, y1 - y0 + 0.36, 0.32]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <Billboard position={[0, y, 0]} follow>
         <mesh
@@ -72,7 +94,7 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
             begin(y);
           }}
         >
-          <circleGeometry args={[hovered ? 0.2 : 0.16, 20]} />
+          <circleGeometry args={[hovered ? 0.28 : 0.24, 24]} />
           <meshStandardMaterial
             color="#c41e3a"
             emissive="#c41e3a"
@@ -81,9 +103,13 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
             toneMapped={false}
           />
         </mesh>
+        <mesh raycast={skipRaycast}>
+          <ringGeometry args={[0.2, 0.26, 20]} />
+          <meshBasicMaterial color="#c41e3a" transparent opacity={0.4} toneMapped={false} />
+        </mesh>
         <Text
-          position={[0.42, 0, 0]}
-          fontSize={0.12}
+          position={[0.48, 0, 0]}
+          fontSize={0.13}
           color="#f2e4d8"
           anchorX="left"
           anchorY="middle"
@@ -91,7 +117,7 @@ export function ApertureControl({ fStop, y0, y1, position, onChange }: Props) {
           outlineColor="#12080a"
           raycast={skipRaycast}
         >
-          {`f/${fStop}`}
+          {`f/${formatFStop(fStop)}`}
         </Text>
       </Billboard>
     </group>

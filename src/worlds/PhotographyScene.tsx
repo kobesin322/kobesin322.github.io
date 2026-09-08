@@ -35,7 +35,7 @@ function StudioCamera({ reduceMotion }: { reduceMotion: boolean }) {
   useLayoutEffect(() => {
     const rig = controls.current;
     if (!rig) return;
-    void rig.setLookAt(3.6, 2.15, 5.2, 0.15, 1.05, 0.2, false);
+    void rig.setLookAt(2.55, 1.55, 3.35, 0.12, 1.02, 0.18, false);
     const stopIdle = () => {
       idle.current = false;
     };
@@ -57,8 +57,8 @@ function StudioCamera({ reduceMotion }: { reduceMotion: boolean }) {
     <CameraControls
       ref={controls}
       makeDefault
-      minDistance={3.4}
-      maxDistance={11}
+      minDistance={2.4}
+      maxDistance={10}
       minPolarAngle={0.38}
       maxPolarAngle={Math.PI / 2.08}
       smoothTime={0.42}
@@ -109,10 +109,12 @@ export function PhotographyScene({ reduceMotion }: Props) {
     <>
       <color attach="background" args={["#12080a"]} />
       <fog attach="fog" args={["#12080a", 7, 20]} />
-      <ambientLight intensity={0.12} />
-      <hemisphereLight args={["#c45a3a", "#12080a", 0.28]} />
-      <directionalLight position={[4.5, 6.5, 3.5]} intensity={0.55} color="#f0d2b4" />
-      <pointLight position={[0.6, 3.2, 1.2]} intensity={0.7} distance={8} color="#ff5a32" />
+      <ambientLight intensity={0.16} />
+      <hemisphereLight args={["#c45a3a", "#12080a", 0.32]} />
+      <directionalLight position={[3.2, 4.8, 3.8]} intensity={1.15} color="#fff1dd" />
+      <pointLight position={[1.4, 2.6, 2.2]} intensity={1.35} distance={6} color="#ffe0c0" />
+      <pointLight position={[-1.6, 2.4, 1.4]} intensity={0.55} distance={6} color="#8aa0c8" />
+      <pointLight position={[0.4, 3.0, -1.2]} intensity={0.55} distance={7} color="#ff5a32" />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} raycast={skipRaycast}>
         <circleGeometry args={[6.4, 32]} />
@@ -132,7 +134,7 @@ export function PhotographyScene({ reduceMotion }: Props) {
         <meshStandardMaterial color="#2a1c16" metalness={0.45} roughness={0.4} />
       </mesh>
 
-      <group position={[0, 0.92, 0]} rotation={[0, -0.55, 0]} scale={2.15}>
+      <group position={[0, 1.05, 0]} rotation={[0, -0.55, 0]} scale={2.55}>
         <CameraCraft
           color="#d8c2a4"
           luminosity={0.7}
@@ -170,7 +172,7 @@ export function PhotographyScene({ reduceMotion }: Props) {
         DRAG THE IRIS · CLICK A PRINT · ORBIT THE STUDIO
       </Text>
 
-      <ApertureControl fStop={fStop} y0={0.7} y1={2.15} position={[1.55, 0, 0.55]} onChange={setFStop} />
+      <ApertureControl fStop={fStop} y0={0.7} y1={2.15} position={[2.35, 0, 0.85]} onChange={setFStop} />
       {PRINTS.map((spec) => (
         <HangingPrint
           key={spec.id}

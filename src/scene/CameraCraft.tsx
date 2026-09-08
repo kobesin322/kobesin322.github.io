@@ -40,7 +40,7 @@ export function CameraCraft({
       {/* Body */}
       <mesh raycast={skipRaycast}>
         <boxGeometry args={[0.5, 0.28, 0.2]} />
-        <meshStandardMaterial color="#16181c" metalness={0.72} roughness={0.28} />
+        <meshStandardMaterial color="#2c323a" metalness={0.78} roughness={0.24} />
       </mesh>
       {/* Leatherette front */}
       <mesh position={[0, -0.01, 0.102]} raycast={skipRaycast}>
@@ -50,7 +50,7 @@ export function CameraCraft({
       {/* Top plate */}
       <mesh position={[0, 0.15, 0]} raycast={skipRaycast}>
         <boxGeometry args={[0.5, 0.034, 0.2]} />
-        <meshStandardMaterial color="#8b929c" metalness={0.88} roughness={0.18} />
+        <meshStandardMaterial color="#c5ccd4" metalness={0.9} roughness={0.14} />
       </mesh>
       {/* Grip */}
       <mesh position={[-0.2, -0.02, 0.02]} raycast={skipRaycast}>
@@ -177,15 +177,15 @@ export function CameraCraft({
 
       {lit && (
         <>
-          <pointLight position={[0.42, 0.48, 0.7]} intensity={0.7} distance={1.8} color="#fff4e4" />
-          <pointLight position={[-0.5, 0.1, -0.35]} intensity={0.28} distance={1.4} color="#8aa0c8" />
+          <pointLight position={[0.55, 0.55, 0.85]} intensity={1.15} distance={2.4} color="#fff4e4" />
+          <pointLight position={[-0.55, 0.2, -0.4]} intensity={0.45} distance={1.8} color="#8aa0c8" />
         </>
       )}
       {glow && (
         <GlowSprite
           color={color}
-          scale={(active ? 1.15 : 0.72) * (0.55 + luminosity * 0.4)}
-          opacity={0.16 + luminosity * 0.16}
+          scale={(active ? 1.35 : 0.9) * (0.7 + luminosity * 0.45)}
+          opacity={0.22 + luminosity * 0.2}
         />
       )}
     </group>

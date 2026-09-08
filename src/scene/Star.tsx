@@ -34,8 +34,8 @@ export function Star({ star, selection, onSelect }: Props) {
   const showLabel = !entering && (isHub || hovered || focused);
   const idleSpin = !isHub && !entering && !focused && selection.kind === "none";
   const down = useRef({ x: 0, y: 0 });
-  const hitRadius = isHub ? 0.72 : isCamera ? 0.72 : 0.5;
-  const labelY = isHub ? 1.0 : isCamera ? 0.78 : 0.58;
+  const hitRadius = isHub ? 0.72 : isCamera ? 0.92 : 0.5;
+  const labelY = isHub ? 1.0 : isCamera ? 0.92 : 0.58;
 
   useLayoutEffect(() => {
     if (isHub || !craft.current) return;
@@ -82,7 +82,7 @@ export function Star({ star, selection, onSelect }: Props) {
           emitLight={selection.kind === "none" || active}
         />
       ) : (
-        <group ref={craft}>
+        <group ref={craft} scale={isCamera ? 1.35 : 1}>
           {isCamera ? (
             <CameraCraft
               color={star.color}
