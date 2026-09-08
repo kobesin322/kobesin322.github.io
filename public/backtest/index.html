@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FUNDED XAUUSD 3x — Quant Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="head">
+        <div>
+          <h1>FUNDED XAUUSD 3x</h1>
+          <p class="sub">Three gold strategies in one basket &nbsp;·&nbsp; real-tick backtest 2019-2026</p>
+        </div>
+        <p class="brand">Q U A N T _ L A B</p>
+      </header>
+
+      <div class="grid">
+        <section class="chart-col">
+          <div class="chart-block">
+            <p class="y-label">cumulative profit in R&nbsp;&nbsp;(1 R = the risk taken per trade)</p>
+            <div class="chart-frame">
+              <p class="plot-legend">white = all three combined</p>
+              <canvas id="equity-chart" aria-label="Cumulative profit in R"></canvas>
+            </div>
+          </div>
+          <footer class="foot" id="basket-footer"></footer>
+        </section>
+        <aside class="cards" id="strategy-cards"></aside>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
