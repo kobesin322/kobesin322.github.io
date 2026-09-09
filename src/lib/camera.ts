@@ -34,6 +34,13 @@ export function lookAtForSelection(selection: Selection): LookAt {
         target: [x + 0.08, y + 0.05, z + 0.16],
       };
     }
+    if (star.id === "poker") {
+      const [x, y, z] = star.position;
+      return {
+        position: [x + 0.95, y + 0.5, z + 1.5],
+        target: [x + 0.04, y + 0.08, z + 0.12],
+      };
+    }
     const radial =
       target.lengthSq() < 0.04 ? new Vector3(0, 0.2, 1) : target.clone().normalize();
     const position = target
